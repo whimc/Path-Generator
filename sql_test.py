@@ -4,14 +4,6 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 creds = {
-    'host': '96.127.169.218',
-    'database': 'mc115627',
-    'user': 'mc115627',
-    'password': 'd149e703df',
-    'use_pure': True,
-    'charset': 'utf8',
-}
-creds = {
     'host': None,
     'database': None,
     'user': None,
@@ -33,10 +25,7 @@ for var in creds.keys():
 if None in creds.values():
     exit()
 
-username = 'Poi'
-start_time = '1570000000'
-end_time = '1580000000'
-world_names = [
+WORLD_NAMES = [
     'ColdMapViable',
     'EarthBaseV3',
     'HabitableStripV2',
@@ -47,71 +36,96 @@ world_names = [
     'TiltedM3Final'
 ]
 
-# map_in_query = '(' + (','.join(f"'{string}'" for string in world_names)) + ')'
+def fetch_position_data(cursor, username, start_time, end_time):
+    """
+    Fetches all position data for a user between two times.
+    """
 
-# mydb = mysql.connector.connect(**creds)
-# cursor = mydb.cursor()
+    global WORLD_NAMES
+    # map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_NAMES)) + ')'
 
-# # Block interactions
-# cursor.execute(
-#     "SELECT world AS world_name, x, y, z, time "
-#     "FROM dm_position "
-#     f"WHERE username = '{username}' "
-#     f"AND world IN {map_in_query} "
-#     "ORDER BY time ASC"
-# )
+    cursor.execute(
+        "SELECT world AS world_name, x, y, z, time "
+        "FROM dm_position "
+        f"WHERE username = '{username}' "
+        # f"AND world IN {map_in_query} "
+        "ORDER BY time ASC"
+    )
 
-# pos_data = cursor.fetchall()
-# # for entry in pos_data:
-# #     print(entry)
-# print(f'{len(pos_data)} position entries')
+    res = [entry for entry in cursor.fetchall() if entry[0] in WORLD_NAMES]
+    return sorted(res, key = lambda x: (x[0], x[4]))
 
+def fetch_block_data(cursor, username, start_time, end_time):
+    """
+    Fetches all block data for a user between two times.
+    """
 
-# # Positions
-# cursor.execute(
-#     "SELECT ("
-#     " SELECT world FROM co_world WHERE id = wid) AS world_name, "
-#     " x, y, z, time "
-#     "FROM co_block as b "
-#     f"WHERE time BETWEEN {start_time} AND {end_time} "
-#     f"AND user = (SELECT rowid FROM co_user WHERE user = '{username}') "
-#     "ORDER BY time ASC"
-# )
+    global WORLD_NAMES
 
-# block_data = cursor.fetchall()
-# # for entry in block_data:
-# #     print(entry)
-# print(f'{len(block_data)} block entries')
+    cursor.execute(
+        "SELECT ("
+        " SELECT world FROM co_world WHERE id = wid) AS world_name, "
+        " x, y, z, time "
+        "FROM co_block as b "
+        f"WHERE time BETWEEN {start_time} AND {end_time} "
+        f"AND user = (SELECT rowid FROM co_user WHERE user = '{username}') "
+        "ORDER BY time ASC"
+    )
 
+    res = [entry for entry in cursor.fetchall() if entry[0] in WORLD_NAMES]
+    return sorted(res, key = lambda x: (x[0], x[4]))
 
-# # Observations
-# cursor.execute(
-#     "SELECT world AS world_name, x, y, z, observation "
-#     "FROM whimc_observations "
-#     f"WHERE name = '{username}' "
-#     "AND active = 1"
-# )
+def fetch_observation_data(cursor, username, start_time, end_time):
+    """
+    Fetches all observation data for a user between two times
+    """
 
-# obs_data = cursor.fetchall()
-# # for entry in obs_data:
-# #     print(entry)
-# print(f'{len(obs_data)} observation entries')
+    global WORLD_NAMES
 
+    cursor.execute(
+        "SELECT world AS world_name, x, y, z, observation "
+        "FROM whimc_observations "
+        f"WHERE name = '{username}' "
+        "AND active = 1"
+    )
 
-draw_map = {}
-for world_name in world_names:
-    try:
-        img_file = Image.open(os.path.join('maps', f'{world_name}.png'))
-        draw_map[world_name] = ImageDraw.Draw(img_file)
-    except Exception:
-        print(sys.exc_info()[0])
+    res = [entry for entry in cursor.fetchall() if entry[0] in WORLD_NAMES]
+    return sorted(res, key = lambda x: (x[0], x[4]))
 
+def get_path(username, start_time, end_time):
 
-for (world_name, x, y, z, time) in pos_data:
-    pass
+    global WORLD_NAMES
 
-for (world_name, x, y, z, time) in block_data:
-    pass
+    draw_map = dict()
+    for world_name in WORLD_NAMES:
+        try:
+            img_file = Image.open(os.path.join('maps', f'{world_name}.png'))
+            draw_map[world_name] = ImageDraw.Draw(img_file)
+        except Exception:
+            print(sys.exc_info()[0])
 
-for (world_name, x, y, z, observation) in obs_data:
-    pass
+    mydb = mysql.connector.connect(**creds)
+    cursor = mydb.cursor()
+
+    pos_data = fetch_position_data(cursor, username, start_time, end_time)
+    block_data = fetch_block_data(cursor, username, start_time, end_time)
+    obs_data = fetch_observation_data(cursor, username, start_time, end_time)
+
+    count = 0
+
+    prev_world = pos_data[0][0]
+    for (world_name, x, y, z, time) in pos_data:
+        # print(world_name, x, y, z, time)
+        count+=1
+
+    for (world_name, x, y, z, time) in block_data:
+        # print(world_name, x, y, z, time)
+        count+=1
+
+    for (world_name, x, y, z, observation) in obs_data:
+        # print(world_name, x, y, z, observation)
+        count+=1
+
+    print(count)
+
+get_path('Poi', '1570000000', '1580000000')
