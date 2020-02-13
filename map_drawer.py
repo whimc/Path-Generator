@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 from math import sqrt
+import numpy as np
 
 class Coordinate:
     def __init__(self, sql_input):
@@ -47,14 +48,6 @@ def line(draw, coord1: Coordinate, coord2: Coordinate):
         coord1 {Coordinate} -- Coordinate of the original position
         coord2 {Coordinate} -- Coordinate of the next position
     """
-
-
-def line(draw, pos1, pos2):
-    """
-    Draws a line between the given points with the color depending on the Y value.
-    Accounts for coordinate mapping.
-    """
-
     #               R    G    B
     # low    black: 0    0    0
     # high   white: 225  225  255
@@ -63,6 +56,8 @@ def line(draw, pos1, pos2):
     ll = 70.0
     ul = 120.0
 
+    pos1 = coord1.scaled_3d_coord()
+    pos2 = coord2.scaled_3d_coord()
     elev = max(ll, min(pos1[1], ul))
 
     r = int(scale(elev, (ll, ul), (0.0, 255.0)))
@@ -131,46 +126,61 @@ def drawText(draw, pos, text, color='white', size=20, outline=True):
     draw.text(pos, text, color, font=font)
 
 
-# TODO: Rewrite 
-def drawPositions(draw, session, world):
+def draw_positions(draw_dict, pos_data):
+    """Draws positions onto map images. First position is a green dot,
+    last position is a red dot. Elevation changes line colors.
+    (low = black, high = white)
+    
+    Arguments:
+        draw_dict {dict} -- {'world_name': ImageDraw} dictionary
+        pos_data {list} -- (world_name, x, y, z, time) data tuple
     """
-    Draws lines between concurrent positions from the position data in the database.
-    Places a green dot at the beginning and a blue dot at the end.
-    """
+    prev_coord = None
+    first_pos = True
+    for entry in pos_data:
+        coord = Coordinate(entry)
 
-    prevPos = None
-    firstPos = None
-    data = data_fetcher.getPositionData(session, world)
+        if not prev_coord:
+            prev_coord = coord
+            continue
 
-    distance = 0
+        if coord.data - prev_coord.data > 10:
+            prev_coord = coord
+            continue
 
-    for (x, y, z) in data:
-        currentPos = scaleToMap((x, y, z))
+        if coord.world not in draw_dict:
+            continue
+        map_draw = draw_dict[coord.world]
 
-        if prevPos == None:
-            firstPos = currentPos
-        else:
-            line(draw, currentPos, prevPos)
-            dif = (currentPos[0] - prevPos[0], currentPos[1] -
-                   prevPos[1], currentPos[2] - prevPos[2])
-            distance += sqrt(dif[0]*dif[0] + dif[1]*dif[1] + dif[2]*dif[2])
+        if coord.world != prev_coord.world:
+            # Finish off the previous image path
+            dot(draw_dict[prev_coord.world], prev_coord, 'red')
 
-        prevPos = currentPos
+            prev_coord = None
+            first_pos = True
+            prev_coord = coord
+            continue
 
-    if firstPos != None:
-        dot(draw, firstPos, 'green')
-    if prevPos != None:
-        dot(draw, prevPos, 'blue')
+        cur = coord.scaled_3d_coord()
+        prev = prev_coord.scaled_3d_coord()
 
-    return distance
+        dist = np.linalg.norm(np.array(cur) - np.array(prev))
 
+        line(map_draw, prev_coord, coord)
+        if first_pos:
+            dot(map_draw, prev_coord, 'green')
+            first_pos = False
+        prev_coord = coord
+
+
+    dot(draw_dict[prev_coord.world], prev_coord, 'red')
 
 def draw_observations(draw_dict, obs_data):
     """Draws observations onto map images
     
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
-        obs_data {tuple} -- (world_name, x, y, z, observation) data tuple
+        obs_data {list} -- (world_name, x, y, z, observation) data tuple
     """
     for entry in obs_data:
         coord = Coordinate(entry)
@@ -184,6 +194,12 @@ def draw_observations(draw_dict, obs_data):
 
 
 def draw_blocks(draw_dict, block_data):
+    """Draws blocks onto map images
+    
+    Arguments:
+        draw_dict {dict} -- {'world_name': ImageDraw} dictionary
+        block_data {list} -- (world_name, x, y, z, interact_bool) data tuple
+    """
     for entry in block_data:
         coord = Coordinate(entry)
         broken = coord.data
@@ -199,6 +215,7 @@ def draw_blocks(draw_dict, block_data):
         heat_bubble(map_draw, coord, color)
 
 
+# TODO: Rewrite
 def createImage(img, sessions, worldName, worldId):
     """
     Creates a new img from the given map image and sessions
