@@ -25,7 +25,7 @@ def get_envvar_or_secret(path):
     """
     if path in os.environ:
         return os.environ[path]
-    if path in vars(secrets):
+    if path in vars(secrets) and vars(secrets)[path]:
         return vars(secrets)[path]
     
     print(f'* {path} is not set as an environment variable or within `secrets.py!')
@@ -220,5 +220,5 @@ def prompt_runner():
     end_time = int(input('Unix end-time: '))
     get_paths(username, start_time, end_time)
 
-# prompt_runner()
-get_paths('Poi', 1570000000, 1582000000)
+prompt_runner()
+# get_paths('Poi', 1570000000, 1582000000)
