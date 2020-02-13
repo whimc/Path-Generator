@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
 from math import sqrt
 import numpy as np
+from datetime import date
+from Lib.collections import Counter
 
 class Coordinate:
     def __init__(self, sql_input):
@@ -133,8 +135,13 @@ def draw_positions(draw_dict, pos_data):
     
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
-        pos_data {list} -- (world_name, x, y, z, time) data tuple
+        pos_data {list} -- (world_name, x, y, z, time) data tuple list
+
+    Returns:
+        dict -- Dictionary keep track of distance traveled per world
     """
+    counts = Counter()
+
     prev_coord = None
     first_pos = True
     for entry in pos_data:
@@ -165,6 +172,7 @@ def draw_positions(draw_dict, pos_data):
         prev = prev_coord.scaled_3d_coord()
 
         dist = np.linalg.norm(np.array(cur) - np.array(prev))
+        counts[coord.world] += dist
 
         line(map_draw, prev_coord, coord)
         if first_pos:
@@ -172,16 +180,22 @@ def draw_positions(draw_dict, pos_data):
             first_pos = False
         prev_coord = coord
 
-
     dot(draw_dict[prev_coord.world], prev_coord, 'red')
+
+    return counts
 
 def draw_observations(draw_dict, obs_data):
     """Draws observations onto map images
     
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
-        obs_data {list} -- (world_name, x, y, z, observation) data tuple
+        obs_data {list} -- (world_name, x, y, z, observation) data tuple list
+
+    Returns:
+        dict -- Dictionary keeping track of observations per world
     """
+    counts = Counter()
+
     for entry in obs_data:
         coord = Coordinate(entry)
 
@@ -191,6 +205,9 @@ def draw_observations(draw_dict, obs_data):
 
         dot(map_draw, coord, 'red')
         drawText(map_draw, coord.scaled_2d_coord(), coord.data)
+        counts[coord.world] += 1
+    
+    return counts
 
 
 def draw_blocks(draw_dict, block_data):
@@ -198,8 +215,13 @@ def draw_blocks(draw_dict, block_data):
     
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
-        block_data {list} -- (world_name, x, y, z, interact_bool) data tuple
+        block_data {list} -- (world_name, x, y, z, interact_bool) data tuple list
+    
+    Returns:
+        dict -- Dictionary keeping tracking of blocks interacted with per world
     """
+    counts = Counter()
+
     for entry in block_data:
         coord = Coordinate(entry)
         broken = coord.data
@@ -213,89 +235,61 @@ def draw_blocks(draw_dict, block_data):
             color = (255, 0, 0, 100)
         
         heat_bubble(map_draw, coord, color)
+        counts[coord.world] += 1
+    
+    return counts
 
 
-# TODO: Rewrite
-def createImage(img, sessions, worldName, worldId):
+def draw_path_image(draw_dict, username, start_time, end_time,
+                    pos_data, block_data, obs_data):
+    """Creates the completed image with all the gathered data.
+    
+    Arguments:
+        draw_dict {dict} -- {'world_name': ImageDraw} dictionary
+        username {str} -- Username of player
+        start_time {int} -- Start Unix time
+        end_time {int} -- End Unix time
+        pos_data {list} -- (world_name, x, y, z, time) data tuple list
+        block_data {list} -- (world_name, x, y, z, interact_bool) data tuple list
+        obs_data {list} -- (world_name, x, y, z, observation) data tuple list
     """
-    Creates a new img from the given map image and sessions
-    Returns None if there were no interactions in the given sessions on the map
-    """
 
-    footer = Image.new('RGB', (img.width, img.height + 200),
-                       color=(230, 230, 230))
-    footer.paste(img)
+    # Counts to display per map
+    distances = draw_positions(draw_dict, pos_data)
+    blocks = draw_blocks(draw_dict, block_data)
+    observations = draw_observations(draw_dict, obs_data)
+    
+    # Duration in minutes
+    duration = round(end_time - start_time / 60, 2)
 
-    draw = ImageDraw.Draw(footer, "RGBA")
+    # Formatted dates for start / end times
+    start_date = date.fromtimestamp(start_time).strftime('%b %d, %Y')
+    end_date = date.fromtimestamp(end_time).strftime('%b %d, %Y')
 
-    hasData = False
-    duration = 0
-    distance = 0
-    blocks = 0
-    observations = 0
+    for name, draw in draw_dict.items():
+        height = 1034
+        vSpace = 30
+        drawText(draw, (10, height), "Username:", 'black', 25)
+        drawText(draw, (10 + 140, height), username, 'red', 25)
+        height += vSpace
 
-    for currSession in sessions:
-        currHasData = False
+        drawText(draw, (10, height), "Duration:", 'black', 25)
+        drawText(draw, (10 + 110, height), "%s minutes" % duration, 'red', 25)
+        height += vSpace
 
-        temp = drawBlockData(draw, currSession, worldId)
-        if temp:
-            currHasData = True
-            blocks += temp
+        drawText(draw, (10, height), "Start and end time:", 'black', 25)
+        drawText(draw, (10 + 225, height), "%s through %s" %
+                (start_date, end_date), 'red', 25)
+        height += vSpace
 
-        temp = drawPositions(draw, currSession, worldName)
-        if temp:
-            currHasData = True
-            distance += temp
+        drawText(draw, (10, height), "Distance Traveled:", 'black', 25)
+        drawText(draw, (10 + 220, height), "%s blocks" % int(distances[name]), 'red', 25)
+        height += vSpace
 
-        temp = drawObservations(draw, currSession, worldName)
-        if temp:
-            currHasData = True
-            observations += temp
+        drawText(draw, (10, height), "Blocks Interacted:", 'black', 25)
+        drawText(draw, (10 + 210, height), "%s blocks" % blocks[name], 'red', 25)
+        height += vSpace
 
-        if currHasData:
-            duration += currSession.end_time - currSession.start_time
-            hasData = True
-
-    if not hasData:
-        return None
-
-    # Rounding the duration to hours and the distance to an integer
-    duration = round(duration / (60.0*60.0), 2)
-    distance = int(distance)
-
-    # Getting a formatted version of the start and end times
-    startDate = datetime.fromtimestamp(
-        sessions[0].start_time).strftime('%b %d, %Y')
-    endDate = datetime.fromtimestamp(
-        sessions[-1].end_time).strftime('%b %d, %Y')
-
-    # Really ugly hard coded text for statistics
-    height = 1034
-    vSpace = 30
-    drawText(draw, (10, height), "Username:", 'black', 25)
-    drawText(draw, (10 + 140, height), sessions[0].username, 'red', 25)
-    height += vSpace
-
-    drawText(draw, (10, height), "Duration:", 'black', 25)
-    drawText(draw, (10 + 110, height), "%s hours" % duration, 'red', 25)
-    height += vSpace
-
-    drawText(draw, (10, height), "Start and end time:", 'black', 25)
-    drawText(draw, (10 + 225, height), "%s through %s" %
-             (startDate, endDate), 'red', 25)
-    height += vSpace
-
-    drawText(draw, (10, height), "Distance Traveled:", 'black', 25)
-    drawText(draw, (10 + 220, height), "%s blocks" % distance, 'red', 25)
-    height += vSpace
-
-    drawText(draw, (10, height), "Blocks Interacted:", 'black', 25)
-    drawText(draw, (10 + 210, height), "%s blocks" % blocks, 'red', 25)
-    height += vSpace
-
-    drawText(draw, (10, height), "Observations made:", 'black', 25)
-    drawText(draw, (10 + 235, height), "%s observations" %
-             observations, 'red', 25)
-    height += vSpace
-
-    return footer
+        drawText(draw, (10, height), "Observations made:", 'black', 25)
+        drawText(draw, (10 + 235, height), "%s observations" %
+                observations[name], 'red', 25)
