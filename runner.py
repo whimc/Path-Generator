@@ -3,6 +3,7 @@ import sys
 import os
 from PIL import Image, ImageDraw, ImageFont
 import map_drawer
+import secrets
 
 creds = {
     'host': None,
@@ -13,16 +14,32 @@ creds = {
     'charset': 'utf8',
 }
 
+def get_envvar_or_secret(path):
+    """Grabs a variable from environment variables or `secrets.py`
+    
+    Arguments:
+        path {str} -- The name of the variable to grab
+    
+    Returns:
+        str -- The value of the variable or None if it does not exist
+    """
+    if path in os.environ:
+        return os.environ[path]
+    if path in vars(secrets):
+        return vars(secrets)[path]
+    
+    print(f'* {path} is not set as an environment variable or within `secrets.py!')
+    return None
+
 for var in creds.keys():
     if creds[var] is not None:
         continue
-    env_var = f'MAPGEN_{var.upper()}'
-    if env_var in os.environ:
-        creds[var] = os.environ[env_var]
-        print(f'{env_var}={creds[var]}')
-    else:
-        print(f'* {env_var} is not set as an environment variable!')
+    env_key = f'MAPGEN_{var.upper()}'
+    env_var = get_envvar_or_secret(env_key)
 
+    creds[var] = env_var
+    print(f'{env_key}={creds[var]}')
+    
 if None in creds.values():
     exit()
 
@@ -38,8 +55,16 @@ WORLD_NAMES = {
 }
 
 def fetch_position_data(cursor, username, start_time: int, end_time: int):
-    """
-    Fetches all position data for a user between two times.
+    """Fetches all position data for a user between two times.
+    
+    Arguments:
+        cursor {MySQLCursor} -- Cursor to execute query on
+        username {str} -- Username of target player
+        start_time {int} -- Unix start time
+        end_time {int} -- Unix end time
+    
+    Returns:
+        list() : (world_name, x, y, z, time) -- List of tuples containing queried information
     """
 
     global WORLD_NAMES
@@ -57,8 +82,17 @@ def fetch_position_data(cursor, username, start_time: int, end_time: int):
     return sorted(cursor.fetchall(), key = lambda x: (x[0], x[4]))
 
 def fetch_block_data(cursor, username, start_time: int, end_time: int):
-    """
-    Fetches all block data for a user between two times.
+    """Fetches all block data for a user between two times.
+    `action` corresponds to 0 if block was placed and 1 if block was broken.
+    
+    Arguments:
+        cursor {MySQLCursor} -- Cursor to execute query on
+        username {str} -- Username of target player
+        start_time {int} -- Unix start time
+        end_time {int} -- Unix end time
+    
+    Returns:
+        list() : (world_name, x, y, z, action) -- List of tuples containing queried information
     """
 
     global WORLD_NAMES
@@ -75,13 +109,19 @@ def fetch_block_data(cursor, username, start_time: int, end_time: int):
         "ORDER BY time ASC"
     )
 
-    # res = [entry for entry in cursor.fetchall() if entry[0] in WORLD_NAMES]
-    # return sorted(res, key = lambda x: (x[0], x[4]))
     return cursor.fetchall()
 
 def fetch_observation_data(cursor, username, start_time: int, end_time: int):
-    """
-    Fetches all observation data for a user between two times
+    """Fetches all observation data for a user between two times.
+    
+    Arguments:
+        cursor {MySQLCursor} -- Cursor to execute query on
+        username {str} -- Username of target player
+        start_time {int} -- Unix start time
+        end_time {int} -- Unix end time
+    
+    Returns:
+        list() : (world_name, x, y, z, observation) -- List of tuples containing queried information
     """
 
     global WORLD_NAMES
@@ -96,11 +136,17 @@ def fetch_observation_data(cursor, username, start_time: int, end_time: int):
         "AND active = 1"
     )
 
-    # res = [entry for entry in cursor.fetchall() if entry[0] in WORLD_NAMES]
-    # return sorted(res, key = lambda x: (x[0], x[4]))
     return cursor.fetchall()
 
-def get_path(username, start_time: int, end_time: int):
+def generate_images(username, start_time: int, end_time: int):
+    """Generate path images for all worlds for the given user between `start_time` and `end_time`.
+    Saves path images with `output/`.
+    
+    Arguments:
+        username {str} -- Username of target player
+        start_time {int} -- Unix start time
+        end_time {int} -- Unix end time
+    """
 
     global WORLD_NAMES
 
@@ -138,12 +184,41 @@ def get_path(username, start_time: int, end_time: int):
     map_drawer.draw_path_image(draw_dict, username, start_time, end_time, 
                                 pos_data, block_data, obs_data)
 
+    if not os.path.exists('output'):
+        os.mkdir('output')
+        
     for (name, img) in img_map.items():
         img.save(os.path.join('output', f'{name}.png'))
 
-username = input('Player username: ')
-start_time = int(input('Unix start-time: '))
-end_time = int(input('Unix end-time: '))
 
-# get_path('Poi', 1570000000, 1582000000)
-get_path(username, start_time, end_time)
+def get_paths(username, start_time: int, end_time: int):
+    """Uploads path images to Imgur and returns json containing links to each image.
+    
+    Arguments:
+        username {str} -- Username of target player
+        start_time {int} -- Unix start time
+        end_time {int} -- Unix end time
+    
+    Returns:
+        json_str -- JSON object with links to generated images
+    """
+
+    generate_images(username, start_time, end_time)
+
+    for file_name in os.listdir('output'):
+            print(file_name)
+
+    # TODO: Upload to Imgur
+
+    return None
+
+def prompt_runner():
+    """Runner for program using terminal-based input
+    """
+    username = input('Player username: ')
+    start_time = int(input('Unix start-time: '))
+    end_time = int(input('Unix end-time: '))
+    get_paths(username, start_time, end_time)
+
+# prompt_runner()
+get_paths('Poi', 1570000000, 1582000000)
