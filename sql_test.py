@@ -37,7 +37,7 @@ WORLD_NAMES = {
     'TiltedM3Final': 42
 }
 
-def fetch_position_data(cursor, username, start_time, end_time):
+def fetch_position_data(cursor, username, start_time: int, end_time: int):
     """
     Fetches all position data for a user between two times.
     """
@@ -56,7 +56,7 @@ def fetch_position_data(cursor, username, start_time, end_time):
 
     return sorted(cursor.fetchall(), key = lambda x: (x[0], x[4]))
 
-def fetch_block_data(cursor, username, start_time, end_time):
+def fetch_block_data(cursor, username, start_time: int, end_time: int):
     """
     Fetches all block data for a user between two times.
     """
@@ -79,7 +79,7 @@ def fetch_block_data(cursor, username, start_time, end_time):
     # return sorted(res, key = lambda x: (x[0], x[4]))
     return cursor.fetchall()
 
-def fetch_observation_data(cursor, username, start_time, end_time):
+def fetch_observation_data(cursor, username, start_time: int, end_time: int):
     """
     Fetches all observation data for a user between two times
     """
@@ -91,7 +91,7 @@ def fetch_observation_data(cursor, username, start_time, end_time):
         "SELECT world AS world_name, x, y, z, observation "
         "FROM whimc_observations "
         f"WHERE name = '{username}' "
-        f"AND time between {int(start_time) * 1000} AND {int(end_time) * 1000} "
+        f"AND time between {start_time * 1000} AND {end_time * 1000} "
         f"AND world IN {map_in_query} "
         "AND active = 1"
     )
@@ -100,17 +100,21 @@ def fetch_observation_data(cursor, username, start_time, end_time):
     # return sorted(res, key = lambda x: (x[0], x[4]))
     return cursor.fetchall()
 
-def get_path(username, start_time, end_time):
+def get_path(username, start_time: int, end_time: int):
 
     global WORLD_NAMES
 
-    draw_map = dict()
+    draw_dict = dict()
     img_map = dict()
     for world_name in WORLD_NAMES:
         try:
             img_file = Image.open(os.path.join('maps', f'{world_name}.png'))
-            draw_map[world_name] = ImageDraw.Draw(img_file)
-            img_map[world_name] = img_file
+            with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
+                            color=(230, 230, 230))
+            with_footer.paste(img_file)
+
+            draw_dict[world_name] = ImageDraw.Draw(with_footer)
+            img_map[world_name] = with_footer
         except Exception:
             print(sys.exc_info()[0])
 
@@ -127,16 +131,14 @@ def get_path(username, start_time, end_time):
 
     prev_world = pos_data[0][0]
     
-    print(len(pos_data))
-    print(block_data)
-    print(obs_data)
+    print(len(pos_data), 'positions')
+    print(len(block_data), 'blocks')
+    print(len(obs_data), 'observations')
 
-    map_drawer.draw_positions(draw_map, pos_data)
-    map_drawer.draw_blocks(draw_map, block_data)
-    map_drawer.draw_observations(draw_map, obs_data)
-
+    map_drawer.draw_path_image(draw_dict, username, start_time, end_time, 
+                                pos_data, block_data, obs_data)
 
     for (name, img) in img_map.items():
         img.save(os.path.join('output', f'{name}.png'))
 
-get_path('Poi', '1570000000', '1582000000')
+get_path('Poi', 1570000000, 1582000000)
