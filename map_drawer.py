@@ -260,7 +260,7 @@ def draw_path_image(draw_dict, username, start_time, end_time,
     observations = draw_observations(draw_dict, obs_data)
     
     # Duration in minutes
-    duration = round(end_time - start_time / 60, 2)
+    duration = round((end_time - start_time) / 60, 2)
 
     # Formatted dates for start / end times
     start_date = date.fromtimestamp(start_time).strftime('%b %d, %Y')
