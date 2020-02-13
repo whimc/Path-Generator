@@ -141,4 +141,9 @@ def get_path(username, start_time: int, end_time: int):
     for (name, img) in img_map.items():
         img.save(os.path.join('output', f'{name}.png'))
 
-get_path('Poi', 1570000000, 1582000000)
+username = input('Player username: ')
+start_time = int(input('Unix start-time: '))
+end_time = int(input('Unix end-time: '))
+
+# get_path('Poi', 1570000000, 1582000000)
+get_path(username, start_time, end_time)
