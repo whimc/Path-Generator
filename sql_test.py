@@ -49,6 +49,7 @@ def fetch_position_data(cursor, username, start_time, end_time):
         "SELECT world AS world_name, x, y, z, time "
         "FROM dm_position "
         f"WHERE username = '{username}' "
+        f"AND time BETWEEN {start_time} AND {end_time} "
         f"AND world IN {map_in_query} "
         "ORDER BY world, time ASC"
     )
@@ -130,8 +131,10 @@ def get_path(username, start_time, end_time):
     print(block_data)
     print(obs_data)
 
-    map_drawer.draw_observations(draw_map, obs_data)
+    map_drawer.draw_positions(draw_map, pos_data)
     map_drawer.draw_blocks(draw_map, block_data)
+    map_drawer.draw_observations(draw_map, obs_data)
+
 
     for (name, img) in img_map.items():
         img.save(os.path.join('output', f'{name}.png'))
