@@ -28,7 +28,7 @@ def get_envvar_or_secret(path):
     if path in vars(secrets) and vars(secrets)[path]:
         return vars(secrets)[path]
     
-    print(f'* {path} is not set as an environment variable or within `secrets.py!')
+    print(f'* {path} is not set as an environment variable or within `secrets.py`!')
     return None
 
 for var in creds.keys():
@@ -38,10 +38,12 @@ for var in creds.keys():
     env_var = get_envvar_or_secret(env_key)
 
     creds[var] = env_var
-    print(f'{env_key}={creds[var]}')
     
 if None in creds.values():
     exit()
+
+for var in creds.keys():
+    print(f'{env_key}={creds[var]}')
 
 WORLD_NAMES = {
     'ColdMapViable': 39,
