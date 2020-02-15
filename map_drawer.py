@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 from math import sqrt
 import numpy as np
 from datetime import date
-from Lib.collections import Counter
+from collections import Counter
 
 class Coordinate:
     def __init__(self, sql_input):

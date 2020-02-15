@@ -142,6 +142,7 @@ def generate_images(username, start_time: int, end_time: int):
     parser = ConfigParser()
     parser.read('config.ini')
 
+    invalid = False
     for var, value in creds.items():
         if value is not None:
             continue
@@ -149,8 +150,9 @@ def generate_images(username, start_time: int, end_time: int):
     
         if not creds[var]:
             print(f'`{var}` is not set in `config.ini`!')
+            invalid = True
 
-    if None in creds.values():
+    if invalid:
         exit()
 
     global WORLD_NAMES
@@ -233,5 +235,6 @@ def prompt_runner():
     links = get_path_links(username, start_time, end_time)
     print(links)
 
-# prompt_runner()
-# get_path_links('Poi', 1570000000, 1582000000)
+if __name__ == '__main__':
+    prompt_runner()
+    # get_path_links('Poi', 1570000000, 1582000000)

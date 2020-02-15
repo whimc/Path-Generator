@@ -4,13 +4,16 @@ Generates images with block, position, and observations data overlayed. The most
 All the path images will also be saved in `output/USERNAME/TIME INTERVAL/`.
 
 ## Getting started
-Make sure you're running at least `Python 3.6`.
-
 Modify `config.ini` to contain proper values.
 
-Run `pip install -r requirements.txt` to install all python requirements.
+To install all python library dependencies:
+```
+pip3 install -r requirements.txt
+```
 
 ## Running path generator
+_**Make sure you're running at least `Python 3.6`.**_
+
 To locally run the generator and be prompted for a username, start time, and end time.
 ```
 python runner.py
