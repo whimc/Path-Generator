@@ -130,7 +130,6 @@ def generate_images(username, start_time: int, end_time: int):
         end_time {int} -- Unix end time
     """
 
-    # TODO: Parse creds here
     creds = {
         'host': None,
         'database': None,
@@ -141,6 +140,7 @@ def generate_images(username, start_time: int, end_time: int):
     }
 
     parser = ConfigParser()
+    parser.read('config.ini')
 
     for var, value in creds.items():
         if value is not None:
@@ -178,10 +178,6 @@ def generate_images(username, start_time: int, end_time: int):
 
     cursor.close()
 
-    count = 0
-
-    prev_world = pos_data[0][0]
-    
     print(len(pos_data), 'positions')
     print(len(block_data), 'blocks')
     print(len(obs_data), 'observations')
@@ -196,7 +192,7 @@ def generate_images(username, start_time: int, end_time: int):
         img.save(os.path.join('output', f'{name}.png'))
 
 
-def get_paths(username, start_time: int, end_time: int):
+def get_path_links(username, start_time: int, end_time: int):
     """Uploads path images to Imgur and returns json containing links to each image.
     
     Arguments:
@@ -225,8 +221,8 @@ def prompt_runner():
     username = input('Player username: ')
     start_time = int(input('Unix start-time: '))
     end_time = int(input('Unix end-time: '))
-    links = get_paths(username, start_time, end_time)
+    links = get_path_links(username, start_time, end_time)
     print(links)
 
 # prompt_runner()
-get_paths('Poi', 1570000000, 1582000000)
+get_path_links('Poi', 1570000000, 1582000000)
