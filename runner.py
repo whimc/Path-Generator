@@ -188,8 +188,15 @@ def generate_images(username, start_time: int, end_time: int):
     if not os.path.exists('output'):
         os.mkdir('output')
         
+    if not os.path.exists(os.path.join('output', username)):
+        os.mkdir(os.path.join('output', username))
+
+    if not os.path.exists(os.path.join('output', username, f'{start_time}-{end_time}')):
+        os.mkdir(os.path.join('output', username, f'{start_time}-{end_time}'))
+
     for (name, img) in img_map.items():
         img.save(os.path.join('output', f'{name}.png'))
+        img.save(os.path.join('output', username, f'{start_time}-{end_time}', f'{name}.png'))
 
 
 def get_path_links(username, start_time: int, end_time: int):
@@ -206,13 +213,15 @@ def get_path_links(username, start_time: int, end_time: int):
 
     generate_images(username, start_time, end_time)
 
-    links = []
+    path_name_dict = dict()
     for file_name in os.listdir('output'):
         path = os.path.join('output', file_name)
+        if not os.path.isfile(path):
+            continue
         img_name = f'{username}-{start_time}-{end_time}_{file_name}'
-        link = imgur_uploader.upload_to_imgur(path, img_name)
-        links.append(link)
+        path_name_dict[path] = img_name
 
+    links = imgur_uploader.upload_to_imgur(path_name_dict)
     return links
 
 def prompt_runner():
@@ -224,5 +233,5 @@ def prompt_runner():
     links = get_path_links(username, start_time, end_time)
     print(links)
 
-# prompt_runner()
-get_path_links('Poi', 1570000000, 1582000000)
+prompt_runner()
+# get_path_links('Poi', 1570000000, 1582000000)
