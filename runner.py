@@ -2,17 +2,11 @@ import mysql.connector
 import sys
 import os
 from PIL import Image, ImageDraw, ImageFont
-import map_drawer
-import secrets
+from configparser import ConfigParser
 
-creds = {
-    'host': None,
-    'database': None,
-    'user': None,
-    'password': None,
-    'use_pure': True,
-    'charset': 'utf8',
-}
+import map_drawer
+import imgur_uploader
+
 
 def get_envvar_or_secret(path):
     """Grabs a variable from environment variables or `secrets.py`
@@ -30,20 +24,6 @@ def get_envvar_or_secret(path):
     
     print(f'* {path} is not set as an environment variable or within `secrets.py`!')
     return None
-
-for var in creds.keys():
-    if creds[var] is not None:
-        continue
-    env_key = f'MAPGEN_{var.upper()}'
-    env_var = get_envvar_or_secret(env_key)
-
-    creds[var] = env_var
-    
-if None in creds.values():
-    exit()
-
-for var in creds.keys():
-    print(f'{env_key}={creds[var]}')
 
 WORLD_NAMES = {
     'ColdMapViable': 39,
@@ -150,6 +130,29 @@ def generate_images(username, start_time: int, end_time: int):
         end_time {int} -- Unix end time
     """
 
+    # TODO: Parse creds here
+    creds = {
+        'host': None,
+        'database': None,
+        'user': None,
+        'password': None,
+        'use_pure': True,
+        'charset': 'utf8',
+    }
+
+    parser = ConfigParser()
+
+    for var, value in creds.items():
+        if value is not None:
+            continue
+        creds[var] = parser.get('database', var, fallback=None)
+    
+        if not creds[var]:
+            print(f'`{var}` is not set in `config.ini`!')
+
+    if None in creds.values():
+        exit()
+
     global WORLD_NAMES
 
     draw_dict = dict()
@@ -207,12 +210,14 @@ def get_paths(username, start_time: int, end_time: int):
 
     generate_images(username, start_time, end_time)
 
+    links = []
     for file_name in os.listdir('output'):
-            print(file_name)
+        path = os.path.join('output', file_name)
+        img_name = f'{username}-{start_time}-{end_time}_{file_name}'
+        link = imgur_uploader.upload_to_imgur(path, img_name)
+        links.append(link)
 
-    # TODO: Upload to Imgur
-
-    return None
+    return links
 
 def prompt_runner():
     """Runner for program using terminal-based input
@@ -220,7 +225,8 @@ def prompt_runner():
     username = input('Player username: ')
     start_time = int(input('Unix start-time: '))
     end_time = int(input('Unix end-time: '))
-    get_paths(username, start_time, end_time)
+    links = get_paths(username, start_time, end_time)
+    print(links)
 
-prompt_runner()
-# get_paths('Poi', 1570000000, 1582000000)
+# prompt_runner()
+get_paths('Poi', 1570000000, 1582000000)
