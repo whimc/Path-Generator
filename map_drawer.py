@@ -117,8 +117,11 @@ def drawText(draw, pos, text, color='white', size=20, outline=True):
     y = pos[1]
 
     shadowColor = 'black'
-    font = ImageFont.truetype('arial.ttf', size)
-
+    try:
+        font = ImageFont.truetype('arial.ttf', size)
+    except:
+        font = None
+        
     if outline:
         draw.text((x-1, y), text, font=font, fill=shadowColor)
         draw.text((x+1, y), text, font=font, fill=shadowColor)
