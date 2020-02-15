@@ -1,9 +1,0 @@
----
-deployment:
- tasks:
- - export DEPLOYPATH=/home/jackah2/whimc/
- - /bin/cp passenger_wsgi.py $DEPLOYPATH
- - /bin/cp flask_runner.py $DEPLOYPATH
- - /bin/cp runner.py $DEPLOYPATH
- - /bin/cp map_drawer.py $DEPLOYPATH
- - /bin/selectorctl --interpreter ruby --restart-webapp whimc
