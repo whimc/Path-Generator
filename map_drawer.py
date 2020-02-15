@@ -142,6 +142,9 @@ def draw_positions(draw_dict, pos_data):
     """
     counts = Counter()
 
+    if not pos_data:
+        return counts
+
     prev_coord = None
     first_pos = True
     for entry in pos_data:
@@ -196,6 +199,9 @@ def draw_observations(draw_dict, obs_data):
     """
     counts = Counter()
 
+    if not obs_data:
+        return counts
+
     for entry in obs_data:
         coord = Coordinate(entry)
 
@@ -221,6 +227,9 @@ def draw_blocks(draw_dict, block_data):
         dict -- Dictionary keeping tracking of blocks interacted with per world
     """
     counts = Counter()
+
+    if not block_data:
+        return counts
 
     for entry in block_data:
         coord = Coordinate(entry)
