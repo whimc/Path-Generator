@@ -233,5 +233,5 @@ def prompt_runner():
     links = get_path_links(username, start_time, end_time)
     print(links)
 
-prompt_runner()
+# prompt_runner()
 # get_path_links('Poi', 1570000000, 1582000000)
