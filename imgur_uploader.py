@@ -98,12 +98,12 @@ def upload_image(client, album, img_path, img_name, links, overwrite=False):
     for image in album.images:
         if img_name == image.title:
             if overwrite:
-                print('Overriding pre-existing image!')
+                # print('Overriding pre-existing image!')
                 album.remove_images(image)
             else:
                 mutex.acquire()
-                print('FOUND %s: %s' % (image.title, image.link))
-                links.append(image.link)
+                # print('FOUND %s: %s' % (image.title, image.link))
+                links[img_name] = image.link
                 mutex.release()
                 return
 
@@ -111,8 +111,8 @@ def upload_image(client, album, img_path, img_name, links, overwrite=False):
     album.add_images(image)
 
     mutex.acquire()
-    print('UPLOADED %s: %s' % (image.title, image.link))
-    links.append(image.link)
+    # print('UPLOADED %s: %s' % (image.title, image.link))
+    links[img_name] = image.link
     mutex.release()
 
 
@@ -128,8 +128,6 @@ def upload_to_imgur(path_name_dict, overwrite=False):
     Returns:
         [list] -- List of Imgur links to uploaded images
     """
-
-    print('\n\nGetting Imgur client...')
 
     parser = ConfigParser()
     parser.read('config.ini')
@@ -149,7 +147,6 @@ def upload_to_imgur(path_name_dict, overwrite=False):
         auth_with_pin(client, parser)
 
     try:
-        print('Refreshing access token')
         access_token = client.refresh_access_token()
         set_config_val(parser, 'access_token', access_token)
     except:
@@ -158,8 +155,6 @@ def upload_to_imgur(path_name_dict, overwrite=False):
         client = pyimgur.Imgur(**get_config_val_dict(parser, 
             'client_id', 'client_secret', 'refresh_token'
         ))
-
-    print('Client retrieved')
 
     username = get_config_val(parser, 'username')
     album_id = get_config_val(parser, 'album_id')
@@ -174,7 +169,7 @@ def upload_to_imgur(path_name_dict, overwrite=False):
     user = client.get_user(username)
     album = client.get_album(album_id)
 
-    links = []
+    links = dict()
     threads = []
     for img_path, img_name in path_name_dict.items():
         thread = Thread(target=upload_image, args=(client, album, img_path, img_name, links, overwrite))
