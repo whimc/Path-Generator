@@ -82,7 +82,7 @@ def auth_with_pin(client, config_parser):
     return response
 
 
-def upload_image(client, album, img_path, img_name, links, override=False):
+def upload_image(client, album, img_path, img_name, links, overwrite=False):
     """Uploads a single image to Imgur
     
     Arguments:
@@ -93,11 +93,11 @@ def upload_image(client, album, img_path, img_name, links, override=False):
         links {list(str)} -- List of links of uploaded images
     
     Keyword Arguments:
-        override {bool} -- If an image is found within the album, override it?(default: {False})
+        overwrite {bool} -- If an image is found within the album, overwrite it?(default: {False})
     """
     for image in album.images:
         if img_name == image.title:
-            if override:
+            if overwrite:
                 print('Overriding pre-existing image!')
                 album.remove_images(image)
             else:
@@ -116,14 +116,14 @@ def upload_image(client, album, img_path, img_name, links, override=False):
     mutex.release()
 
 
-def upload_to_imgur(path_name_dict, override=False):
+def upload_to_imgur(path_name_dict, overwrite=False):
     """Uploads a bunch of images to Imgur.
     
     Arguments:
         path_name_dict {dict} -- (image path, image name) tuple dictionary
     
     Keyword Arguments:
-        override {bool} -- If an image with the same name already exists, should it be overwritten? (default: {False})
+        overwrite {bool} -- If an image with the same name already exists, should it be overwritten? (default: {False})
     
     Returns:
         [list] -- List of Imgur links to uploaded images
@@ -177,7 +177,7 @@ def upload_to_imgur(path_name_dict, override=False):
     links = []
     threads = []
     for img_path, img_name in path_name_dict.items():
-        thread = Thread(target=upload_image, args=(client, album, img_path, img_name, links, override))
+        thread = Thread(target=upload_image, args=(client, album, img_path, img_name, links, overwrite))
         threads.append(thread)
         thread.start()        
 
