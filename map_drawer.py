@@ -253,7 +253,7 @@ def draw_blocks(draw_dict, block_data):
 
 
 def draw_path_image(draw_dict, username, start_time, end_time,
-                    pos_data, block_data, obs_data):
+                    pos_data, block_data, obs_data, gen_empty=False):
     """Creates the completed image with all the gathered data.
     
     Arguments:
@@ -264,6 +264,12 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         pos_data {list} -- (world_name, x, y, z, time) data tuple list
         block_data {list} -- (world_name, x, y, z, interact_bool) data tuple list
         obs_data {list} -- (world_name, x, y, z, observation) data tuple list
+    
+    Keyword Arguments:
+        gen_empty {bool} -- Whether to generate empty images or not (default: {False})
+
+    Returns:
+        {dict} -- {'world_name': ImageDraw} dictionary after parsing with gen_empty
     """
 
     # Counts to display per map
@@ -277,6 +283,14 @@ def draw_path_image(draw_dict, username, start_time, end_time,
     # Formatted dates for start / end times
     start_date = date.fromtimestamp(start_time).strftime('%b %d, %Y')
     end_date = date.fromtimestamp(end_time).strftime('%b %d, %Y')
+
+    if not gen_empty:
+        # keys = draw_dict.keys().copy()
+        # for name in keys:
+        #     if not distances[name] and not blocks[name] and not observations[name]:
+        #         draw_dict.pop(name)
+        draw_dict = { key:val for key, val in draw_dict.items() if 
+            distances[key] or blocks[key] or observations[key] }
 
     for name, draw in draw_dict.items():
         height = 1034
@@ -305,3 +319,5 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         drawText(draw, (10, height), "Observations made:", 'black', 25)
         drawText(draw, (10 + 235, height), "%s observations" %
                 observations[name], 'red', 25)
+    
+    return draw_dict
