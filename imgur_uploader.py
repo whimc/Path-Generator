@@ -1,8 +1,11 @@
 import pyimgur
 import webbrowser
+from threading import Thread, Lock
 
 import secrets
 from configparser import ConfigParser
+
+mutex = Lock()
 
 def set_config_val(config_parser, key, val):
     """Set a value within the 'imgur' section of the config
@@ -79,7 +82,7 @@ def auth_with_pin(client, config_parser):
     return response
 
 
-def upload_image(client, album, img_path, img_name, override=False):
+def upload_image(client, album, img_path, img_name, links, override=False):
     """Uploads a single image to Imgur
     
     Arguments:
@@ -87,6 +90,7 @@ def upload_image(client, album, img_path, img_name, override=False):
         album {pyimgur.Album} -- Imgur album
         img_path {str} -- Path of the image to upload
         img_name {str} -- Name of the image to upload
+        links {list(str)} -- List of links of uploaded images
     
     Keyword Arguments:
         override {bool} -- If an image is found within the album, override it?(default: {False})
@@ -97,13 +101,19 @@ def upload_image(client, album, img_path, img_name, override=False):
                 print('Overriding pre-existing image!')
                 album.remove_images(image)
             else:
+                mutex.acquire()
                 print('FOUND %s: %s' % (image.title, image.link))
-                return image.link   
+                links.append(image.link)
+                mutex.release()
+                return
 
     image = client.upload_image(path=img_path, title=img_name)
     album.add_images(image)
+
+    mutex.acquire()
     print('UPLOADED %s: %s' % (image.title, image.link))
-    return image.link
+    links.append(image.link)
+    mutex.release()
 
 
 def upload_to_imgur(path_name_dict, override=False):
@@ -165,8 +175,13 @@ def upload_to_imgur(path_name_dict, override=False):
     album = client.get_album(album_id)
 
     links = []
+    threads = []
     for img_path, img_name in path_name_dict.items():
-        links.append(upload_image(client, album, img_path, img_name, override))
-        
+        thread = Thread(target=upload_image, args=(client, album, img_path, img_name, links, override))
+        threads.append(thread)
+        thread.start()        
+
+    for thread in threads:
+        thread.join()
 
     return links
