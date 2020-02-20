@@ -3,10 +3,13 @@ import sys
 import os
 from PIL import Image, ImageDraw, ImageFont
 from configparser import ConfigParser
+from threading import Thread, Lock
+import argparse
 
 import map_drawer
 import imgur_uploader
 
+mutex = Lock()
 
 def get_envvar_or_secret(path):
     """Grabs a variable from environment variables or `secrets.py`
@@ -49,7 +52,6 @@ def fetch_position_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, time) -- List of tuples containing queried information
     """
 
-    global WORLD_NAMES
     map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_NAMES)) + ')'
 
     cursor.execute(
@@ -77,7 +79,6 @@ def fetch_block_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, action) -- List of tuples containing queried information
     """
 
-    global WORLD_NAMES
     map_in_query = '(' + (','.join(f"'{wid}'" for wid in WORLD_NAMES.values())) + ')'
 
     cursor.execute(
@@ -106,7 +107,6 @@ def fetch_observation_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, observation) -- List of tuples containing queried information
     """
 
-    global WORLD_NAMES
     map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_NAMES)) + ')'
 
     cursor.execute(
@@ -120,7 +120,7 @@ def fetch_observation_data(cursor, username, start_time: int, end_time: int):
 
     return cursor.fetchall()
 
-def generate_images(username, start_time: int, end_time: int):
+def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     """Generate path images for all worlds for the given user between `start_time` and `end_time`.
     Saves path images with `output/`.
     
@@ -155,8 +155,6 @@ def generate_images(username, start_time: int, end_time: int):
     if invalid:
         exit()
 
-    global WORLD_NAMES
-
     draw_dict = dict()
     img_map = dict()
     for world_name in WORLD_NAMES:
@@ -180,12 +178,17 @@ def generate_images(username, start_time: int, end_time: int):
 
     cursor.close()
 
-    print(len(pos_data), 'positions')
-    print(len(block_data), 'blocks')
-    print(len(obs_data), 'observations')
+    print('\nGathering data:')
+    print(f'\t{len(pos_data)} total positions')
+    print(f'\t{len(block_data)} total blocks')
+    print(f'\t{len(obs_data)} total observations')
+    print('')
 
-    map_drawer.draw_path_image(draw_dict, username, start_time, end_time, 
-                                pos_data, block_data, obs_data)
+    draw_dict = map_drawer.draw_path_image(draw_dict, username, start_time, end_time, 
+                                pos_data, block_data, obs_data, gen_empty)
+
+    img_map = { key:val for key, val in img_map.items() if
+        key in draw_dict }
 
     if not os.path.exists('output'):
         os.mkdir('output')
@@ -196,12 +199,31 @@ def generate_images(username, start_time: int, end_time: int):
     if not os.path.exists(os.path.join('output', username, f'{start_time}-{end_time}')):
         os.mkdir(os.path.join('output', username, f'{start_time}-{end_time}'))
 
+    if not img_map.keys():
+        return
+
+    print('\nSaving images:')
+    threads = []
     for (name, img) in img_map.items():
-        img.save(os.path.join('output', f'{name}.png'))
-        img.save(os.path.join('output', username, f'{start_time}-{end_time}', f'{name}.png'))
+        gen_path = os.path.join('output', f'{name}.png')
+        spec_path = os.path.join('output', username, f'{start_time}-{end_time}', f'{name}.png')
+
+        thread = Thread(target=save_image, args=(img, name, gen_path, spec_path))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+    print('')
 
 
-def get_path_links(username, start_time: int, end_time: int):
+def save_image(image, world_name, *paths):
+    for path in paths:
+        image.save(path)
+    print(f'\tImage saved for {world_name}.')
+
+def get_path_links(username, start_time, end_time, no_imgur=False, 
+        overwrite=False, gen_empty=False, *args, **kwargs):
     """Uploads path images to Imgur and returns json containing links to each image.
     
     Arguments:
@@ -213,7 +235,19 @@ def get_path_links(username, start_time: int, end_time: int):
         json_str -- JSON object with links to generated images
     """
 
-    generate_images(username, start_time, end_time)
+    for file_name in os.listdir('output'):
+        path = os.path.join('output', file_name)
+        if not os.path.isfile(path):
+            continue
+        os.remove(path)
+
+    generate_images(username, start_time, end_time, gen_empty)
+
+    # Skip uploading to imgur if they have have that option set
+    if no_imgur:
+        return None
+    
+    print('')
 
     path_name_dict = dict()
     for file_name in os.listdir('output'):
@@ -223,18 +257,40 @@ def get_path_links(username, start_time: int, end_time: int):
         img_name = f'{username}-{start_time}-{end_time}_{file_name}'
         path_name_dict[path] = img_name
 
-    links = imgur_uploader.upload_to_imgur(path_name_dict)
-    return links
+    if not path_name_dict:
+        print('There are no images to upload!')
+        return None
 
-def prompt_runner():
+    print('Uploading images to Imgur...')
+
+    return imgur_uploader.upload_to_imgur(path_name_dict, overwrite)
+
+def prompt_runner(**kwargs):
     """Runner for program using terminal-based input
     """
-    username = input('Player username: ')
-    start_time = int(input('Unix start-time: '))
-    end_time = int(input('Unix end-time: '))
-    links = get_path_links(username, start_time, end_time)
-    print(links)
+    kwargs['username'] = input('Player username: ')
+    kwargs['start_time'] = int(input('Unix start-time: '))
+    kwargs['end_time'] = int(input('Unix end-time: '))
+
+    links = get_path_links(**kwargs)
+    if not links:
+        return
+    
+    print('\nLinks:')
+    padding = len(max(links.keys(), key=len)) + 1
+    for name, link in links.items():
+        print(f'\t{name:<{padding}} -> {link}')
 
 if __name__ == '__main__':
-    prompt_runner()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--no-imgur', action='store_true', dest='no_imgur',
+                        help='Do not upload the resulting images to Imgur.')
+    parser.add_argument('-o', '--overwrite', action='store_true', dest='overwrite',
+                        help='If the path image already exists on Imgur, overwrite it.')
+    parser.add_argument('-e', '--generate-empty', action='store_true', dest='gen_empty',
+                        help='Still generate a path image even if it has no actions on it.')
+
+    options = vars(parser.parse_args())
+    prompt_runner(**options)
+
     # get_path_links('Poi', 1570000000, 1582000000)
