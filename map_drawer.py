@@ -3,6 +3,7 @@ from math import sqrt
 import numpy as np
 from datetime import date
 from collections import Counter
+import os
 
 class Coordinate:
     def __init__(self, sql_input):
@@ -117,10 +118,11 @@ def drawText(draw, pos, text, color='white', size=20, outline=True):
     y = pos[1]
 
     shadowColor = 'black'
-    try:
-        font = ImageFont.truetype('arial.ttf', size)
-    except:
-        font = None
+    font = ImageFont.truetype(os.path.join('.', 'arial.ttf'), size)
+    # try:
+    #     font = ImageFont.truetype('arial.ttf', size)
+    # except:
+    #     font = None
         
     if outline:
         draw.text((x-1, y), text, font=font, fill=shadowColor)
