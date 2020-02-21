@@ -11,23 +11,6 @@ import imgur_uploader
 
 mutex = Lock()
 
-def get_envvar_or_secret(path):
-    """Grabs a variable from environment variables or `secrets.py`
-    
-    Arguments:
-        path {str} -- The name of the variable to grab
-    
-    Returns:
-        str -- The value of the variable or None if it does not exist
-    """
-    if path in os.environ:
-        return os.environ[path]
-    if path in vars(secrets) and vars(secrets)[path]:
-        return vars(secrets)[path]
-    
-    print(f'* {path} is not set as an environment variable or within `secrets.py`!')
-    return None
-
 WORLD_NAMES = {
     'ColdMapViable': 39,
     'EarthBaseV3': 14,
@@ -149,7 +132,7 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
         creds[var] = parser.get('database', var, fallback=None)
     
         if not creds[var]:
-            print(f'`{var}` is not set in `config.ini`!')
+            print(f'"{var}" is not set within "./config.ini"!')
             invalid = True
 
     if invalid:
