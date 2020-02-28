@@ -42,4 +42,4 @@ api.add_resource(Default, '/')
 api.add_resource(PathGenerator, '/pathgenerator')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='api.henhapl.me')
