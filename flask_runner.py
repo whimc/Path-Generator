@@ -1,8 +1,9 @@
 from flask import Flask, make_response
 from flask_restful import Resource, Api, reqparse
 import json
-# import markdown2
+import os
 
+from server.markdown_to_html import toHTML
 import runner
 
 app = Flask(__name__)
@@ -19,11 +20,8 @@ def get_message(success, message):
 
 class Default(Resource):
     def get(self):
-        with open('README.md', 'r') as md_file:
-            headers = { 'Content-Type': 'text/html' }
-            # content = md_file.read()
-            # return make_response(markdown2.markdown(content, extras=['tables']), 200, headers)
-            return make_response('Default Flask-Restful page!', 200, headers)
+        headers = { 'Content-Type': 'text/html' }
+        return make_response(toHTML(os.path.join('server', 'lander_page.md')), 200, headers)
         
 
 class PathGenerator(Resource):
@@ -43,4 +41,4 @@ api.add_resource(Default, '/')
 api.add_resource(PathGenerator, '/pathgenerator')
 
 if __name__ == '__main__':
-    app.run(host='api.henhapl.me')
+    app.run(host='0.0.0.0')
