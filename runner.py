@@ -224,6 +224,7 @@ def get_path_links(username, start_time, end_time, no_imgur=False,
             continue
         os.remove(path)
 
+    print(f'Generating for {username}: {start_time}-{end_time}')
     generate_images(username, start_time, end_time, gen_empty)
 
     # Skip uploading to imgur if they have have that option set
