@@ -1,5 +1,6 @@
 from flask import Flask, make_response
 from flask_restful import Resource, Api, reqparse
+from flask_cors import CORS
 import json
 import os
 
@@ -7,6 +8,7 @@ from server.markdown_to_html import toHTML
 import runner
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 parser = reqparse.RequestParser()
@@ -35,11 +37,7 @@ class PathGenerator(Resource):
 
         links = runner.get_path_links(username, start_time, end_time, gen_empty=gen_empty)
 
-        response = make_response({'success': True, 'links': links or []})
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-
-        return response
+        return make_response({'success': True, 'links': links or []})
 
 api.add_resource(Default, '/')
 api.add_resource(PathGenerator, '/pathgenerator')
