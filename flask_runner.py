@@ -35,7 +35,11 @@ class PathGenerator(Resource):
 
         links = runner.get_path_links(username, start_time, end_time, gen_empty=gen_empty)
 
-        return {'success': True, 'links': links or []}
+        response = make_response({'success': True, 'links': links or []})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+
+        return response
 
 api.add_resource(Default, '/')
 api.add_resource(PathGenerator, '/pathgenerator')
