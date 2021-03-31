@@ -4,7 +4,7 @@ _parser = RawConfigParser()
 _parser.optionxform = str
 _parser.read('config.ini')
 
-_get = lambda entry: _parser.get('database-table', entry)
+_get = lambda entry: _parser.get('database-tables', entry)
 
 BLOCKS_TABLE = _get('coreprotect_blocks')
 USERS_TABLE = _get('coreprotect_users')

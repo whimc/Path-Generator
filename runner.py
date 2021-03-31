@@ -9,18 +9,10 @@ import argparse
 import map_drawer
 import imgur_uploader
 
-mutex = Lock()
+from config import BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
+    POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLD_IDS
 
-WORLD_NAMES = {
-    'ColdMapViable': 39,
-    'EarthBaseV3': 14,
-    'HabitableStripV2': 51,
-    'HotMap': 38,
-    'JungleIslandEquator': 55,
-    'NoMoonFinal_': 52,
-    'TiltedM1Final': 43,
-    'TiltedM3Final': 42
-}
+mutex = Lock()
 
 def fetch_position_data(cursor, username, start_time: int, end_time: int):
     """Fetches all position data for a user between two times.
@@ -35,11 +27,11 @@ def fetch_position_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, time) -- List of tuples containing queried information
     """
 
-    map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_NAMES)) + ')'
+    map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_IDS)) + ')'
 
     cursor.execute(
         "SELECT world AS world_name, x, y, z, time "
-        "FROM dm_position "
+        f"FROM {POSITIONS_TABLE} "
         f"WHERE username = '{username}' "
         f"AND time BETWEEN {start_time} AND {end_time} "
         f"AND world IN {map_in_query} "
@@ -62,15 +54,15 @@ def fetch_block_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, action) -- List of tuples containing queried information
     """
 
-    map_in_query = '(' + (','.join(f"'{wid}'" for wid in WORLD_NAMES.values())) + ')'
+    map_in_query = '(' + (','.join(f"'{wid}'" for wid in WORLD_IDS.values())) + ')'
 
     cursor.execute(
         "SELECT ("
-        " SELECT world FROM co_world WHERE id = wid) AS world_name, "
+        f" SELECT world FROM {WORLDS_TABLE} WHERE id = wid) AS world_name, "
         " x, y, z, action "
-        "FROM co_block as b "
+        f"FROM {BLOCKS_TABLE} as b "
         f"WHERE time BETWEEN {start_time} AND {end_time} "
-        f"AND user = (SELECT rowid FROM co_user WHERE user = '{username}') "
+        f"AND user = (SELECT rowid FROM {USERS_TABLE} WHERE user = '{username}') "
         f"AND wid IN {map_in_query} "
         "ORDER BY time ASC"
     )
@@ -90,12 +82,12 @@ def fetch_observation_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, observation) -- List of tuples containing queried information
     """
 
-    map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_NAMES)) + ')'
+    map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_IDS)) + ')'
 
     cursor.execute(
         "SELECT world AS world_name, x, y, z, observation "
-        "FROM whimc_observations "
-        f"WHERE name = '{username}' "
+        f"FROM {OBSERVATIONS_TABLE} "
+        f"WHERE username = '{username}' "
         f"AND time between {start_time * 1000} AND {end_time * 1000} "
         f"AND world IN {map_in_query} "
         "AND active = 1"
@@ -140,7 +132,7 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
 
     draw_dict = dict()
     img_map = dict()
-    for world_name in WORLD_NAMES:
+    for world_name in WORLD_IDS:
         try:
             img_file = Image.open(os.path.join('maps', f'{world_name}.png'))
             with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
