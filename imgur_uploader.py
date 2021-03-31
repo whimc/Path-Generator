@@ -2,14 +2,13 @@ import pyimgur
 import webbrowser
 from threading import Thread, Lock
 
-import secrets
 from configparser import ConfigParser
 
 mutex = Lock()
 
 def set_config_val(config_parser, key, val):
     """Set a value within the 'imgur' section of the config
-    
+
     Arguments:
         config_parser {configparser.ConfigParser} -- The config parser to set from
         key {str} -- The key of the config entry
@@ -20,7 +19,7 @@ def set_config_val(config_parser, key, val):
 
 def set_config_val_dict(config_parser, arg_dict):
     """Sets a all key/value pairs from a diction in the 'imgur' section of the config
-    
+
     Arguments:
         config_parser {configparser.ConfigParser} -- The config parser to set from
         arg_dict {dict} -- The dictionary containing key/value config entries
@@ -33,14 +32,14 @@ def set_config_val_dict(config_parser, arg_dict):
 
 def get_config_val(config_parser, key, fallback=None):
     """Get a value from the 'imgur' section of the config
-    
+
     Arguments:
         config_parser {configparser.ConfigParser} -- The config parser to get from
         key {str} -- The key of the config entry
-    
+
     Keyword Arguments:
         fallback {str} -- Default value to return if key is not found/set (default: {None})
-    
+
     Returns:
         [str] -- Value within the config matching 'key'
     """
@@ -49,10 +48,10 @@ def get_config_val(config_parser, key, fallback=None):
 
 def get_config_val_dict(config_parser, *args):
     """Get a dictionary of key/value entries from the 'imgur' section of the config
-    
+
     Arguments:
         config_parser {configparser.ConfigParser} -- The config parser to get from
-    
+
     Returns:
         [dict] -- Key/value config entries
     """
@@ -61,11 +60,11 @@ def get_config_val_dict(config_parser, *args):
 
 def auth_with_pin(client, config_parser):
     """Authorize Imgur client with a PIN
-    
+
     Arguments:
         client {pyimgur.Client} -- Imgur client
         config_parser {configparser.ConfigParser} -- Config parser for getting values
-    
+
     Returns:
         [tuple] -- (access_token, refresh_token) tuple
     """
@@ -84,14 +83,14 @@ def auth_with_pin(client, config_parser):
 
 def upload_image(client, album, img_path, img_name, links, overwrite=False):
     """Uploads a single image to Imgur
-    
+
     Arguments:
         client {pyimgur.Client} -- Imgur client
         album {pyimgur.Album} -- Imgur album
         img_path {str} -- Path of the image to upload
         img_name {str} -- Name of the image to upload
         links {list(str)} -- List of links of uploaded images
-    
+
     Keyword Arguments:
         overwrite {bool} -- If an image is found within the album, overwrite it?(default: {False})
     """
@@ -118,13 +117,13 @@ def upload_image(client, album, img_path, img_name, links, overwrite=False):
 
 def upload_to_imgur(path_name_dict, overwrite=False):
     """Uploads a bunch of images to Imgur.
-    
+
     Arguments:
         path_name_dict {dict} -- (image path, image name) tuple dictionary
-    
+
     Keyword Arguments:
         overwrite {bool} -- If an image with the same name already exists, should it be overwritten? (default: {False})
-    
+
     Returns:
         [list] -- List of Imgur links to uploaded images
     """
@@ -137,11 +136,11 @@ def upload_to_imgur(path_name_dict, overwrite=False):
         exit()
 
     if get_config_val(parser, 'refresh_token'):
-        client = pyimgur.Imgur(**get_config_val_dict(parser, 
+        client = pyimgur.Imgur(**get_config_val_dict(parser,
             'client_id', 'client_secret', 'refresh_token'
         ))
     else:
-        client = pyimgur.Imgur(**get_config_val_dict(parser, 
+        client = pyimgur.Imgur(**get_config_val_dict(parser,
             'client_id', 'client_secret'
         ))
         auth_with_pin(client, parser)
@@ -152,7 +151,7 @@ def upload_to_imgur(path_name_dict, overwrite=False):
     except:
         print('Access token failed to refresh')
         auth_with_pin(client, parser)
-        client = pyimgur.Imgur(**get_config_val_dict(parser, 
+        client = pyimgur.Imgur(**get_config_val_dict(parser,
             'client_id', 'client_secret', 'refresh_token'
         ))
 
@@ -174,7 +173,7 @@ def upload_to_imgur(path_name_dict, overwrite=False):
     for img_path, img_name in path_name_dict.items():
         thread = Thread(target=upload_image, args=(client, album, img_path, img_name, links, overwrite))
         threads.append(thread)
-        thread.start()        
+        thread.start()
 
     for thread in threads:
         thread.join()
