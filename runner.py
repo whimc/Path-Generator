@@ -89,8 +89,7 @@ def fetch_observation_data(cursor, username, start_time: int, end_time: int):
         f"FROM {OBSERVATIONS_TABLE} "
         f"WHERE username = '{username}' "
         f"AND time between {start_time * 1000} AND {end_time * 1000} "
-        f"AND world IN {map_in_query} "
-        "AND active = 1"
+        f"AND world IN {map_in_query}"
     )
 
     return cursor.fetchall()
