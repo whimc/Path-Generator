@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance serving path-generator
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/srv/whimc/path-generator
+Environment="PATH=/srv/whimc/path-generator/venv/bin"
+ExecStart=/srv/whimc/path-generator/env/bin/gunicorn --workers 1 --bind unix:path-generator.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
