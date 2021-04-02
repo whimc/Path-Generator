@@ -12,6 +12,7 @@ import imgur_uploader
 from config import BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
     POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLD_IDS
 
+OUTPUT_DIR = 'output'
 mutex = Lock()
 
 def fetch_position_data(cursor, username, start_time: int, end_time: int):
@@ -164,14 +165,14 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     img_map = { key:val for key, val in img_map.items() if
         key in draw_dict }
 
-    if not os.path.exists('output'):
-        os.mkdir('output')
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
 
-    if not os.path.exists(os.path.join('output', username)):
-        os.mkdir(os.path.join('output', username))
+    if not os.path.exists(os.path.join(OUTPUT_DIR, username)):
+        os.mkdir(os.path.join(OUTPUT_DIR, username))
 
-    if not os.path.exists(os.path.join('output', username, f'{start_time}-{end_time}')):
-        os.mkdir(os.path.join('output', username, f'{start_time}-{end_time}'))
+    if not os.path.exists(os.path.join(OUTPUT_DIR, username, f'{start_time}-{end_time}')):
+        os.mkdir(os.path.join(OUTPUT_DIR, username, f'{start_time}-{end_time}'))
 
     if not img_map.keys():
         return
@@ -179,8 +180,8 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     print('\nSaving images:')
     threads = []
     for (name, img) in img_map.items():
-        gen_path = os.path.join('output', f'{name}.png')
-        spec_path = os.path.join('output', username, f'{start_time}-{end_time}', f'{name}.png')
+        gen_path = os.path.join(OUTPUT_DIR, f'{name}.png')
+        spec_path = os.path.join(OUTPUT_DIR, username, f'{start_time}-{end_time}', f'{name}.png')
 
         thread = Thread(target=save_image, args=(img, name, gen_path, spec_path))
         threads.append(thread)
@@ -209,11 +210,12 @@ def get_path_links(username, start_time, end_time, no_imgur=False,
         json_str -- JSON object with links to generated images
     """
 
-    for file_name in os.listdir('output'):
-        path = os.path.join('output', file_name)
-        if not os.path.isfile(path):
-            continue
-        os.remove(path)
+    if os.path.exists(OUTPUT_DIR):
+        for file_name in os.listdir(OUTPUT_DIR):
+            path = os.path.join(OUTPUT_DIR, file_name)
+            if not os.path.isfile(path):
+                continue
+            os.remove(path)
 
     print(f'Generating for {username}: {start_time}-{end_time}')
     generate_images(username, start_time, end_time, gen_empty)
@@ -225,8 +227,8 @@ def get_path_links(username, start_time, end_time, no_imgur=False,
     print('')
 
     path_name_dict = dict()
-    for file_name in os.listdir('output'):
-        path = os.path.join('output', file_name)
+    for file_name in os.listdir(OUTPUT_DIR):
+        path = os.path.join(OUTPUT_DIR, file_name)
         if not os.path.isfile(path):
             continue
         img_name = f'{username}-{start_time}-{end_time}_{file_name}'
