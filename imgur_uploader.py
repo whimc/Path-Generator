@@ -2,7 +2,7 @@ import pyimgur
 import webbrowser
 from threading import Thread, Lock
 
-from configparser import ConfigParser
+from configparser import RawConfigParser
 
 mutex = Lock()
 
@@ -128,7 +128,8 @@ def upload_to_imgur(path_name_dict, overwrite=False):
         [list] -- List of Imgur links to uploaded images
     """
 
-    parser = ConfigParser()
+    parser = RawConfigParser()
+    parser.optionxform = str
     parser.read('config.ini')
 
     if not parser.get('imgur', 'client_id') or not parser.get('imgur', 'client_secret'):

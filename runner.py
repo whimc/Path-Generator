@@ -240,24 +240,12 @@ def get_path_links(username, start_time, end_time, no_imgur=False,
 
     return imgur_uploader.upload_to_imgur(path_name_dict, overwrite)
 
-def prompt_runner(**kwargs):
-    """Runner for program using terminal-based input
-    """
-    kwargs['username'] = input('Player username: ')
-    kwargs['start_time'] = int(input('Unix start-time: '))
-    kwargs['end_time'] = int(input('Unix end-time: '))
-
-    links = get_path_links(**kwargs)
-    if not links:
-        return
-
-    print('\nLinks:')
-    padding = len(max(links.keys(), key=len)) + 1
-    for name, link in links.items():
-        print(f'\t{name:<{padding}} -> {link}')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('username', type=str, help='Username of the player')
+    parser.add_argument('start_time', type=int, help='Unix start time')
+    parser.add_argument('end_time', type=int, help='Unix end time')
     parser.add_argument('-n', '--no-imgur', action='store_true', dest='no_imgur',
                         help='Do not upload the resulting images to Imgur.')
     parser.add_argument('-o', '--overwrite', action='store_true', dest='overwrite',
@@ -266,6 +254,14 @@ if __name__ == '__main__':
                         help='Still generate a path image even if it has no actions on it.')
 
     options = vars(parser.parse_args())
-    prompt_runner(**options)
+
+    links = get_path_links(**options)
+    if not links:
+        exit()
+
+    print('\nLinks:')
+    padding = len(max(links.keys(), key=len)) + 1
+    for name, link in links.items():
+        print(f'\t{name:<{padding}} -> {link}')
 
     # get_path_links('Poi', 1570000000, 1582000000)
