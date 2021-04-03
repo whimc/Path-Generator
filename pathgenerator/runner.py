@@ -4,16 +4,18 @@ import os
 from PIL import Image, ImageDraw
 from configparser import ConfigParser
 from threading import Thread, Lock
-import argparse
 
-import map_drawer
-import imgur_uploader
+import pathgenerator.map_drawer as map_drawer
+import pathgenerator.imgur_uploader as imgur_uploader
 
-from config import BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
+from pathgenerator.config import BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
     POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLD_IDS
 
 OUTPUT_DIR = 'output'
 mutex = Lock()
+
+def _maps_in_query():
+    return '(' + (','.join(f"'{world}'" for world in WORLD_IDS)) + ')'
 
 def fetch_position_data(cursor, username, start_time: int, end_time: int):
     """Fetches all position data for a user between two times.
@@ -28,14 +30,12 @@ def fetch_position_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, time) -- List of tuples containing queried information
     """
 
-    map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_IDS)) + ')'
-
     cursor.execute(
         "SELECT world AS world_name, x, y, z, time "
         f"FROM {POSITIONS_TABLE} "
         f"WHERE username = '{username}' "
         f"AND time BETWEEN {start_time} AND {end_time} "
-        f"AND world IN {map_in_query} "
+        f"AND world IN {_maps_in_query()} "
         "ORDER BY world, time ASC"
     )
 
@@ -55,8 +55,6 @@ def fetch_block_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, action) -- List of tuples containing queried information
     """
 
-    map_in_query = '(' + (','.join(f"'{wid}'" for wid in WORLD_IDS.values())) + ')'
-
     cursor.execute(
         "SELECT ("
         f" SELECT world FROM {WORLDS_TABLE} WHERE id = wid) AS world_name, "
@@ -64,7 +62,7 @@ def fetch_block_data(cursor, username, start_time: int, end_time: int):
         f"FROM {BLOCKS_TABLE} as b "
         f"WHERE time BETWEEN {start_time} AND {end_time} "
         f"AND user = (SELECT rowid FROM {USERS_TABLE} WHERE user = '{username}') "
-        f"AND wid IN {map_in_query} "
+        f"AND wid IN {_maps_in_query()} "
         "ORDER BY time ASC"
     )
 
@@ -83,14 +81,12 @@ def fetch_observation_data(cursor, username, start_time: int, end_time: int):
         list() : (world_name, x, y, z, observation) -- List of tuples containing queried information
     """
 
-    map_in_query = '(' + (','.join(f"'{world}'" for world in WORLD_IDS)) + ')'
-
     cursor.execute(
         "SELECT world AS world_name, x, y, z, observation "
         f"FROM {OBSERVATIONS_TABLE} "
         f"WHERE username = '{username}' "
         f"AND time between {start_time * 1000} AND {end_time * 1000} "
-        f"AND world IN {map_in_query}"
+        f"AND world IN {_maps_in_query()}"
     )
 
     return cursor.fetchall()
@@ -241,29 +237,3 @@ def get_path_links(username, start_time, end_time, no_imgur=False,
     print('Uploading images to Imgur...')
 
     return imgur_uploader.upload_to_imgur(path_name_dict, overwrite)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('username', type=str, help='Username of the player')
-    parser.add_argument('start_time', type=int, help='Unix start time')
-    parser.add_argument('end_time', type=int, help='Unix end time')
-    parser.add_argument('-n', '--no-imgur', action='store_true', dest='no_imgur',
-                        help='Do not upload the resulting images to Imgur.')
-    parser.add_argument('-o', '--overwrite', action='store_true', dest='overwrite',
-                        help='If the path image already exists on Imgur, overwrite it.')
-    parser.add_argument('-e', '--generate-empty', action='store_true', dest='gen_empty',
-                        help='Still generate a path image even if it has no actions on it.')
-
-    options = vars(parser.parse_args())
-
-    links = get_path_links(**options)
-    if not links:
-        exit()
-
-    print('\nLinks:')
-    padding = len(max(links.keys(), key=len)) + 1
-    for name, link in links.items():
-        print(f'\t{name:<{padding}} -> {link}')
-
-    # get_path_links('Poi', 1570000000, 1582000000)

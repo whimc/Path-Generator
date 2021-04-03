@@ -1,5 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
-from math import sqrt
+from PIL import ImageFont
 import numpy as np
 from datetime import date
 from collections import Counter
@@ -15,15 +14,15 @@ class Coordinate:
 
     def scaled_3d_coord(self):
         """Scales the Coordinate to a scaled 3d coordinate
-        
+
         Returns:
             (x, y, z) -- 3-d tuple containing the scaled x, y, z coordiantes
         """
         return (self.x + 512, self.y, self.z + 512)
-    
+
     def scaled_2d_coord(self):
         """Scales the Coordinate to a 2d coordiante (excluding Y)
-        
+
         Returns:
             (x, z) -- 2-d tuple containing the scaled x, z coordinates
         """
@@ -45,7 +44,7 @@ def scale(val, src, dst):
 def line(draw, coord1: Coordinate, coord2: Coordinate):
     """Draws a line between two given Coordinates.
     The color of the line depends on the Y value (low = black, high = white)
-    
+
     Arguments:
         draw {Pillow.ImageDraw} -- The ImageDraw to draw on
         coord1 {Coordinate} -- Coordinate of the original position
@@ -72,12 +71,12 @@ def line(draw, coord1: Coordinate, coord2: Coordinate):
 
 def dot(draw, coord: Coordinate, color, size=2):
     """Draws a dot at the given map Coordinate with the given color.
-    
+
     Arguments:
         draw {PIL.ImageDraw} -- The ImageDraw to draw on
         coord {Coordinate} -- Where to the place the dot
         color {str} -- Pillow color to make the dot
-    
+
     Keyword Arguments:
         size {int} -- Size of the dot (default: {2})
     """
@@ -90,30 +89,30 @@ def dot(draw, coord: Coordinate, color, size=2):
 
 def heat_bubble(draw, coord: Coordinate, color):
     """Draws a heat bubble at the given map Coordinate with the given color.
-    
+
     Arguments:
         draw {PIL.ImageDraw} -- The ImageDraw to draw on
         coord {Coordinate} -- Where to place the bubble
         color {str} -- Pillow color for bubble
-    """ 
+    """
 
     dot(draw, coord, color, 5)
 
 
 def drawText(draw, pos, text, color='white', size=20, outline=True):
     """Draws text at the given x, y coodinates on the image
-    
+
     Arguments:
         draw {PIL.ImageDraw} -- The ImageDraw to write on
         pos {tuple} -- (x, z) coordinate for the text
         text {str} -- Text to write
-    
+
     Keyword Arguments:
         color {str} -- Pillow color for the text (default: {'white'})
         size {int} -- Size of the text (default: {20})
         outline {bool} -- Whether to outline the text (default: {True})
     """
-    
+
     x = pos[0]
     y = pos[1]
 
@@ -123,7 +122,7 @@ def drawText(draw, pos, text, color='white', size=20, outline=True):
     #     font = ImageFont.truetype('arial.ttf', size)
     # except:
     #     font = None
-        
+
     if outline:
         draw.text((x-1, y), text, font=font, fill=shadowColor)
         draw.text((x+1, y), text, font=font, fill=shadowColor)
@@ -137,7 +136,7 @@ def draw_positions(draw_dict, pos_data):
     """Draws positions onto map images. First position is a green dot,
     last position is a red dot. Elevation changes line colors.
     (low = black, high = white)
-    
+
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
         pos_data {list} -- (world_name, x, y, z, time) data tuple list
@@ -194,7 +193,7 @@ def draw_positions(draw_dict, pos_data):
 
 def draw_observations(draw_dict, obs_data):
     """Draws observations onto map images
-    
+
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
         obs_data {list} -- (world_name, x, y, z, observation) data tuple list
@@ -217,17 +216,17 @@ def draw_observations(draw_dict, obs_data):
         dot(map_draw, coord, 'red')
         drawText(map_draw, coord.scaled_2d_coord(), coord.data)
         counts[coord.world] += 1
-    
+
     return counts
 
 
 def draw_blocks(draw_dict, block_data):
     """Draws blocks onto map images
-    
+
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
         block_data {list} -- (world_name, x, y, z, interact_bool) data tuple list
-    
+
     Returns:
         dict -- Dictionary keeping tracking of blocks interacted with per world
     """
@@ -247,17 +246,17 @@ def draw_blocks(draw_dict, block_data):
         color = (0, 255, 0, 100)
         if broken:
             color = (255, 0, 0, 100)
-        
+
         heat_bubble(map_draw, coord, color)
         counts[coord.world] += 1
-    
+
     return counts
 
 
 def draw_path_image(draw_dict, username, start_time, end_time,
                     pos_data, block_data, obs_data, gen_empty=False):
     """Creates the completed image with all the gathered data.
-    
+
     Arguments:
         draw_dict {dict} -- {'world_name': ImageDraw} dictionary
         username {str} -- Username of player
@@ -266,7 +265,7 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         pos_data {list} -- (world_name, x, y, z, time) data tuple list
         block_data {list} -- (world_name, x, y, z, interact_bool) data tuple list
         obs_data {list} -- (world_name, x, y, z, observation) data tuple list
-    
+
     Keyword Arguments:
         gen_empty {bool} -- Whether to generate empty images or not (default: {False})
 
@@ -278,7 +277,7 @@ def draw_path_image(draw_dict, username, start_time, end_time,
     distances = draw_positions(draw_dict, pos_data)
     blocks = draw_blocks(draw_dict, block_data)
     observations = draw_observations(draw_dict, obs_data)
-    
+
     # Duration in minutes
     duration = round((end_time - start_time) / 60, 2)
 
@@ -291,7 +290,7 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         # for name in keys:
         #     if not distances[name] and not blocks[name] and not observations[name]:
         #         draw_dict.pop(name)
-        draw_dict = { key:val for key, val in draw_dict.items() if 
+        draw_dict = { key:val for key, val in draw_dict.items() if
             distances[key] or blocks[key] or observations[key] }
 
     for name, draw in draw_dict.items():
@@ -321,5 +320,5 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         drawText(draw, (10, height), "Observations made:", 'black', 25)
         drawText(draw, (10 + 235, height), "%s observations" %
                 observations[name], 'red', 25)
-    
+
     return draw_dict

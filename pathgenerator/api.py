@@ -3,9 +3,9 @@ from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import json
 import os
-
 from server.markdown_to_html import toHTML
-import runner
+
+import pathgenerator.runner as runner
 
 app = Flask(__name__)
 CORS(app)
@@ -24,7 +24,7 @@ class Default(Resource):
     def get(self):
         headers = { 'Content-Type': 'text/html' }
         return make_response(toHTML(os.path.join('server', 'lander_page.md')), 200, headers)
-        
+
 
 class PathGenerator(Resource):
     def get(self):
