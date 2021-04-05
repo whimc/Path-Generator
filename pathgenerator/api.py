@@ -9,7 +9,7 @@ import pathgenerator.runner as runner
 
 app = Flask(__name__)
 CORS(app)
-api = Api(app)
+api = Api(app, prefix='/path-generator')
 
 parser = reqparse.RequestParser()
 parser.add_argument('username', type=str, required=True, help='You must specify a username')
@@ -40,7 +40,7 @@ class PathGenerator(Resource):
         return make_response({'success': True, 'links': links or []})
 
 api.add_resource(Default, '/')
-api.add_resource(PathGenerator, '/pathgenerator')
+api.add_resource(PathGenerator, '/api')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
