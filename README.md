@@ -8,6 +8,7 @@ For example, the images generated for user `Poi` between times `1570000000` and 
 
 ### Config
 Create a copy of `config-empty.ini` and rename it to `config.ini`. Fill in each field with the proper information.
+The values for `world-ids` can be found within the `co_world` table from CoreProtect. The map images within `maps/` should have the same name as the worlds.
 
 <details>
     <summary>Example config.ini</summary>
@@ -31,18 +32,17 @@ client_id = xxx
 client_secret = xxx
 access_token = xxx
 refresh_token = xxx
-username = test
 album_id = test
 
 [world-ids]
-ColderSun_Hot = 1
-ColderSun_Cold = 2
-ColderSun_HabitableStrip = 3
-TiltedEarth_Melting = 4
-TiltedEarth_JungleIsland = 5
+ColderSun_Cold = 1
+ColderSun_HabitableStrip = 2
+ColderSun_Hot = 3
+EarthControl = 4
+NoMoon = 5
 TiltedEarth_Frozen = 6
-NoMoon = 7
-EarthControl = 8
+TiltedEarth_JungleIsland = 7
+TiltedEarth_Melting = 8
 ```
 </details>
 

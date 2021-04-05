@@ -3,66 +3,17 @@ import webbrowser
 from threading import Thread, Lock
 from configparser import RawConfigParser
 
+import pathgenerator.config as config
+
+
 mutex = Lock()
 
-def set_config_val(config_parser, key, val):
-    """Set a value within the 'imgur' section of the config
 
-    Arguments:
-        config_parser {configparser.ConfigParser} -- The config parser to set from
-        key {str} -- The key of the config entry
-        val {str} -- The value of the config entry
-    """
-    set_config_val_dict(config_parser, {key: val})
-
-
-def set_config_val_dict(config_parser, arg_dict):
-    """Sets a all key/value pairs from a diction in the 'imgur' section of the config
-
-    Arguments:
-        config_parser {configparser.ConfigParser} -- The config parser to set from
-        arg_dict {dict} -- The dictionary containing key/value config entries
-    """
-    for key, val in arg_dict.items():
-        config_parser.set('imgur', key, val)
-    with open('config.ini', 'w') as file:
-        config_parser.write(file)
-
-
-def get_config_val(config_parser, key, fallback=None):
-    """Get a value from the 'imgur' section of the config
-
-    Arguments:
-        config_parser {configparser.ConfigParser} -- The config parser to get from
-        key {str} -- The key of the config entry
-
-    Keyword Arguments:
-        fallback {str} -- Default value to return if key is not found/set (default: {None})
-
-    Returns:
-        [str] -- Value within the config matching 'key'
-    """
-    return config_parser.get('imgur', key, fallback=fallback)
-
-
-def get_config_val_dict(config_parser, *args):
-    """Get a dictionary of key/value entries from the 'imgur' section of the config
-
-    Arguments:
-        config_parser {configparser.ConfigParser} -- The config parser to get from
-
-    Returns:
-        [dict] -- Key/value config entries
-    """
-    return { key : get_config_val(config_parser, key) for key in args }
-
-
-def auth_with_pin(client, config_parser):
+def auth_with_pin(client):
     """Authorize Imgur client with a PIN
 
     Arguments:
         client {pyimgur.Client} -- Imgur client
-        config_parser {configparser.ConfigParser} -- Config parser for getting values
 
     Returns:
         [tuple] -- (access_token, refresh_token) tuple
@@ -72,13 +23,43 @@ def auth_with_pin(client, config_parser):
     pin = input('What is the pin: ')
     response = client.exchange_pin(pin)
 
-    set_config_val_dict(config_parser, {
-        'access_token': response[0],
-        'refresh_token': response[1],
-    })
+    config.set_multi(config.IMGUR_SECTION,
+        ('access_token', response[0]),
+        ('refresh_token', response[1])
+    )
 
     return response
 
+
+def get_authed_client():
+    refresh_token = config.get(config.IMGUR_SECTION, 'refresh_token')
+    if refresh_token:
+        client = pyimgur.Imgur(
+            client_id=config.IMGUR_CLIENT_ID,
+            client_secret=config.IMGUR_CLIENT_SECRET,
+            refresh_token=refresh_token
+        )
+    else:
+        client = pyimgur.Imgur(
+            client_id=config.IMGUR_CLIENT_ID,
+            client_secret=config.IMGUR_CLIENT_SECRET
+        )
+        auth_with_pin(client)
+
+    try:
+        access_token = client.refresh_access_token()
+        config.set(config.IMGUR_SECTION, 'access_token', access_token)
+    except Exception as e:
+        print(e)
+        print('Access token failed to refresh')
+        auth_with_pin(client)
+        client = pyimgur.Imgur(
+            client_id=config.IMGUR_CLIENT_ID,
+            client_secret=config.IMGUR_CLIENT_SECRET,
+            refresh_token=config.get(config.IMGUR_SECTION, 'refresh_token')
+        )
+
+    return client
 
 def upload_image(client, album, img_path, img_name, links, overwrite=False):
     """Uploads a single image to Imgur
@@ -127,46 +108,8 @@ def upload_to_imgur(path_name_dict, overwrite=False):
         [list] -- List of Imgur links to uploaded images
     """
 
-    parser = RawConfigParser()
-    parser.optionxform = str
-    parser.read('config.ini')
-
-    if not parser.get('imgur', 'client_id') or not parser.get('imgur', 'client_secret'):
-        print('Please enter the `client_id` and `client_secret` into `config.ini`!')
-        exit()
-
-    if get_config_val(parser, 'refresh_token'):
-        client = pyimgur.Imgur(**get_config_val_dict(parser,
-            'client_id', 'client_secret', 'refresh_token'
-        ))
-    else:
-        client = pyimgur.Imgur(**get_config_val_dict(parser,
-            'client_id', 'client_secret'
-        ))
-        auth_with_pin(client, parser)
-
-    try:
-        access_token = client.refresh_access_token()
-        set_config_val(parser, 'access_token', access_token)
-    except:
-        print('Access token failed to refresh')
-        auth_with_pin(client, parser)
-        client = pyimgur.Imgur(**get_config_val_dict(parser,
-            'client_id', 'client_secret', 'refresh_token'
-        ))
-
-    username = get_config_val(parser, 'username')
-    album_id = get_config_val(parser, 'album_id')
-
-    if not username:
-        username = input('What is the username?')
-        set_config_val(parser, 'username', username)
-    if not album_id:
-        album_id = input('What is the album id?')
-        set_config_val(parser, 'album_id', album_id)
-
-    user = client.get_user(username)
-    album = client.get_album(album_id)
+    client = get_authed_client()
+    album = client.get_album(config.IMGUR_ALBUM_ID)
 
     links = dict()
     threads = []

@@ -9,13 +9,13 @@ import pathgenerator.map_drawer as map_drawer
 import pathgenerator.imgur_uploader as imgur_uploader
 
 from pathgenerator.config import BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
-    POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLD_IDS
+    POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
 
 OUTPUT_DIR = 'output'
 mutex = Lock()
 
 def _maps_in_query():
-    return '(' + (','.join(f"'{world}'" for world in WORLD_IDS)) + ')'
+    return '(' + (','.join(f"'{world.name}'" for world in WORLDS)) + ')'
 
 def fetch_position_data(cursor, username, start_time: int, end_time: int):
     """Fetches all position data for a user between two times.
@@ -128,15 +128,16 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
 
     draw_dict = dict()
     img_map = dict()
-    for world_name in WORLD_IDS:
+    for world in WORLDS:
         try:
-            img_file = Image.open(os.path.join('maps', f'{world_name}.png'))
+            print(f'finding {world.name}')
+            img_file = Image.open(world.img_path)
             with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
                             color=(230, 230, 230))
             with_footer.paste(img_file)
 
-            draw_dict[world_name] = ImageDraw.Draw(with_footer)
-            img_map[world_name] = with_footer
+            draw_dict[world.name] = ImageDraw.Draw(with_footer)
+            img_map[world.name] = with_footer
         except Exception:
             print(sys.exc_info()[0])
 
