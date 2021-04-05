@@ -8,6 +8,12 @@ _parser = RawConfigParser()
 _parser.optionxform = str
 _parser.read(PATH)
 
+for section, items in _parser.items():
+    unset = [key for key, item in items.items() if not item]
+    for key in unset:
+        print(f'{section}.{key} is not set within the config!')
+exit()
+
 TABLES_SECTION = 'database-tables'
 _get = lambda entry: _parser.get(TABLES_SECTION, entry)
 BLOCKS_TABLE = _get('coreprotect_blocks')
