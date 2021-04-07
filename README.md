@@ -70,7 +70,7 @@ $ pip install -r requirements.txt
 ## Local Generator
 To locally run the generator:
 ```
-$ python runner.py [-h] [-n] [-o] [-e] <username> <start_time> <end_time>
+$ python -m pathgenerator [-h] [-n] [-o] [-e] <username> <start_time> <end_time>
 ```
 
 ### Options
@@ -82,7 +82,12 @@ $ python runner.py [-h] [-n] [-o] [-e] <username> <start_time> <end_time>
 | `-e`, `--generate-empty` | Still generate a path image even if it has no actions on it. |
 
 ## Flask App
+
+### Running locally
 To run the Flask App on your local computer:
 ```
-$ python flask_runner.py
+$ python -m pathgenerator.api
 ```
+
+### Running on Linux server
+Follow the [install guide](./install.md) to host the API on a Linux server.
