@@ -14,13 +14,13 @@ cd /srv/whimc
 ## Cloning the repo
 We need to clone the repo but since we are the super user right now, there is no SSH key.
 Generate an ssh key on the server and add it to your GitHub account.
-Replace `/location/to/private_ssh_key` with your path. **Make sure you the resulting directory is named `path-generator` (case sensitive)!**
+Replace `/location/to/private_ssh_key` with your path. **Make sure the resulting directory is named `path-generator` (case sensitive)!**
 ```bash
 git clone git@github.com:whimc/Path-Generator.git --config core.sshCommand="ssh -i /location/to/private_ssh_key" path-generator
 ```
 
 ## Python requirements
-Recent versions of Ubuntu come with Python 3 pre-installed. Make sure the version is > 3.6. Update Python if this is not the case. After fulfilling the python version requirement, we can enter the directory and install our requirements.
+Recent versions of Ubuntu come with Python 3 pre-installed. **Make sure the version is > 3.6**. Install/update Python if this is not the case. After fulfilling the python version requirement, we can enter the directory and install our requirements.
 ```bash
 cd path-generator
 python3 -m venv venv # Create a virtual environment to install the required packages
