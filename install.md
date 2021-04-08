@@ -20,13 +20,17 @@ git clone git@github.com:whimc/Path-Generator.git --config core.sshCommand="ssh 
 ```
 
 ## Python requirements
-Recent versions of Ubuntu come with Python 3 pre-installed. **Make sure the version is > 3.6**. Install/update Python if this is not the case. After fulfilling the python version requirement, we can enter the directory and install our requirements.
+Recent versions of Ubuntu come with Python 3 pre-installed. **Make sure the version is > 3.6**. Install/update Python if this is not the case.
+After fulfilling the python version requirement, we can enter the directory and install our requirements.
 ```bash
 cd path-generator
+apt install python3-venv
 python3 -m venv venv # Create a virtual environment to install the required packages
 source venv/bin/activate # Activate the virtual environment
 pip install -r requirements.txt
 ```
+
+## Configure application
 
 ## Creating the system service
 The given `path-generator.service` can be copied to the system serviced directory without modification.
@@ -49,6 +53,12 @@ apt-get install nginx
 Modify `server_name` within `path-generator.conf` to match the public DNS of the box.
 ```bash
 vim path-generator.conf # Modify 'server_name'
+```
+
+Modify `server_names_hash_bucket_size` within `/etc/nginx/nginx.conf` to be 128 instead of 32.
+This is necessary due to the length of EC2 public DNS addresses.
+```bash
+vim /etc/nginx/nginx.conf
 ```
 
 Copy that modified file to nginx's enabled sites and reload Nginx.
