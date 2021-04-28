@@ -1,4 +1,4 @@
-from flask_runner import app
+from pathgenerator.api import app
 
 if __name__ == '__main__':
     app.run()

@@ -1,5 +1,6 @@
 output/
-secrets.py
+config.ini
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
