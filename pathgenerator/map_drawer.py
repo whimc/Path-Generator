@@ -141,13 +141,13 @@ def draw_positions(draw_dict, pos_data):
             prev_coord = coord
             continue
 
-        if coord.world not in draw_dict:
+        if coord.world_name not in draw_dict:
             continue
-        map_draw = draw_dict[coord.world]
+        map_draw = draw_dict[coord.world_name]
 
-        if coord.world != prev_coord.world:
+        if coord.world_name != prev_coord.world_name:
             # Finish off the previous image path
-            dot(draw_dict[prev_coord.world], prev_coord, 'red')
+            dot(draw_dict[prev_coord.world_name], prev_coord, 'red')
 
             prev_coord = None
             first_pos = True
@@ -158,7 +158,7 @@ def draw_positions(draw_dict, pos_data):
         prev = prev_coord.scaled_3d_coord()
 
         dist = np.linalg.norm(np.array(cur) - np.array(prev))
-        counts[coord.world] += dist
+        counts[coord.world_name] += dist
 
         line(map_draw, prev_coord, coord)
         if first_pos:
@@ -166,7 +166,7 @@ def draw_positions(draw_dict, pos_data):
             first_pos = False
         prev_coord = coord
 
-    dot(draw_dict[prev_coord.world], prev_coord, 'red')
+    dot(draw_dict[prev_coord.world_name], prev_coord, 'red')
 
     return counts
 
@@ -189,13 +189,13 @@ def draw_observations(draw_dict, obs_data):
         # The coordinate's "data" is the text of the observation
         coord = Coordinate(*entry)
 
-        if coord.world not in draw_dict:
+        if coord.world_name not in draw_dict:
             continue
-        map_draw = draw_dict[coord.world]
+        map_draw = draw_dict[coord.world_name]
 
         dot(map_draw, coord, 'red')
         drawText(map_draw, coord.scaled_2d_coord(), coord.data)
-        counts[coord.world] += 1
+        counts[coord.world_name] += 1
 
     return counts
 
@@ -220,16 +220,16 @@ def draw_blocks(draw_dict, block_data):
         coord = Coordinate(*entry)
         broken = coord.data
 
-        if coord.world not in draw_dict:
+        if coord.world_name not in draw_dict:
             continue
-        map_draw = draw_dict[coord.world]
+        map_draw = draw_dict[coord.world_name]
 
         color = (0, 255, 0, 100)
         if broken:
             color = (255, 0, 0, 100)
 
         heat_bubble(map_draw, coord, color)
-        counts[coord.world] += 1
+        counts[coord.world_name] += 1
 
     return counts
 

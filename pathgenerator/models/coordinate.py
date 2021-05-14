@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import typing
 
+from pathgenerator.models.world import World
+
 @dataclass
 class Coordinate:
     """
@@ -8,24 +10,28 @@ class Coordinate:
     The 'data' attribute is used to hold any kind of data that is tied with the coordinate.
     """
 
-    world: str
+    world_name: str
     x: float
     y: float
     z: float
     data: typing.Any
+    world: World
 
-    def scaled_3d_coord(self):
+    @property
+    def coord_2d(self):
+        """Scales the Coordinate to a 2d coordinate (excluding Y)
+
+        Returns:
+            (x, z) -- 2-d tuple containing the scaled x, z coordinates
+        """
+        return (self.x - self.world.top_left_coordinate_x, self.z - self.world.top_left_coordinate_z)
+
+    @property
+    def coord_3d(self):
         """Scales the Coordinate to a scaled 3d coordinate
 
         Returns:
             (x, y, z) -- 3-d tuple containing the scaled x, y, z coordiantes
         """
-        return (self.x + 512, self.y, self.z + 512)
-
-    def scaled_2d_coord(self):
-        """Scales the Coordinate to a 2d coordiante (excluding Y)
-
-        Returns:
-            (x, z) -- 2-d tuple containing the scaled x, z coordinates
-        """
-        return (self.x + 512, self.z + 512)
+        x, z = self.coord_2d
+        return (x, self.y, z)
