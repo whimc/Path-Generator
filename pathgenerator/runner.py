@@ -1,137 +1,45 @@
-import mysql.connector
-import sys
 import os
+from pathgenerator.utils.data_fetcher import DataFetcher
 from PIL import Image, ImageDraw
 from threading import Thread, Lock
 
 import pathgenerator.map_drawer as map_drawer
 import pathgenerator.imgur_uploader as imgur_uploader
-
-from pathgenerator.config import DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, \
-    BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
+from pathgenerator.config import WORLDS, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD
 
 OUTPUT_DIR = 'output'
-mutex = Lock()
-
-def _maps_in_query():
-    return '(' + (','.join(f"'{world.world_name}'" for world in WORLDS)) + ')'
-
-def fetch_position_data(cursor, username, start_time: int, end_time: int):
-    """Fetches all position data for a user between two times.
-
-    Arguments:
-        cursor {MySQLCursor} -- Cursor to execute query on
-        username {str} -- Username of target player
-        start_time {int} -- Unix start time
-        end_time {int} -- Unix end time
-
-    Returns:
-        list() : (world_name, x, y, z, time) -- List of tuples containing queried information
-    """
-
-    cursor.execute(
-        "SELECT world AS world_name, x, y, z, time "
-        f"FROM {POSITIONS_TABLE} "
-        f"WHERE username = '{username}' "
-        f"AND time BETWEEN {start_time} AND {end_time} "
-        f"AND world IN {_maps_in_query()} "
-        "ORDER BY world, time ASC"
-    )
-
-    return sorted(cursor.fetchall(), key = lambda x: (x[0], x[4]))
-
-def fetch_block_data(cursor, username, start_time: int, end_time: int):
-    """Fetches all block data for a user between two times.
-    `action` corresponds to 0 if block was placed and 1 if block was broken.
-
-    Arguments:
-        cursor {MySQLCursor} -- Cursor to execute query on
-        username {str} -- Username of target player
-        start_time {int} -- Unix start time
-        end_time {int} -- Unix end time
-
-    Returns:
-        list() : (world_name, x, y, z, action) -- List of tuples containing queried information
-    """
-
-    cursor.execute(
-        "SELECT ("
-        f" SELECT world FROM {WORLDS_TABLE} WHERE id = wid) AS world_name, "
-        " x, y, z, action "
-        f"FROM {BLOCKS_TABLE} as b "
-        f"WHERE time BETWEEN {start_time} AND {end_time} "
-        f"AND user = (SELECT rowid FROM {USERS_TABLE} WHERE user = '{username}') "
-        f"AND wid IN {_maps_in_query()} "
-        "ORDER BY time ASC"
-    )
-
-    return cursor.fetchall()
-
-def fetch_observation_data(cursor, username, start_time: int, end_time: int):
-    """Fetches all observation data for a user between two times.
-
-    Arguments:
-        cursor {MySQLCursor} -- Cursor to execute query on
-        username {str} -- Username of target player
-        start_time {int} -- Unix start time
-        end_time {int} -- Unix end time
-
-    Returns:
-        list() : (world_name, x, y, z, observation) -- List of tuples containing queried information
-    """
-
-    cursor.execute(
-        "SELECT world AS world_name, x, y, z, observation "
-        f"FROM {OBSERVATIONS_TABLE} "
-        f"WHERE username = '{username}' "
-        f"AND time between {start_time * 1000} AND {end_time * 1000} "
-        f"AND world IN {_maps_in_query()}"
-    )
-
-    return cursor.fetchall()
 
 def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     """Generate path images for all worlds for the given user between `start_time` and `end_time`.
-    Saves path images with `output/`.
+    Saves path images within `output/`.
 
     Arguments:
         username {str} -- Username of target player
         start_time {int} -- Unix start time
         end_time {int} -- Unix end time
     """
-
-    creds = {
-        'host': DB_HOST,
-        'database': DB_DATABASE,
-        'user': DB_USER,
-        'password': DB_PASSWORD,
-        'use_pure': True,
-        'charset': 'utf8',
-    }
-
     draw_dict = dict()
     img_map = dict()
-    for world in WORLDS:
-        try:
+    for world_name, worlds in WORLDS.items():
+        for world in worlds:
             print(f'finding {world.display_name}')
             img_file = Image.open(world.image_path)
             with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
                             color=(230, 230, 230))
             with_footer.paste(img_file)
 
-            draw_dict[world.world_name] = ImageDraw.Draw(with_footer)
-            img_map[world.world_name] = with_footer
-        except Exception:
-            print(sys.exc_info()[0])
+            draw_dict[world_name] = ImageDraw.Draw(with_footer)
+            img_map[world_name] = with_footer
 
-    mydb = mysql.connector.connect(**creds)
-    cursor = mydb.cursor()
+    # exit('DEBUG')
 
-    pos_data = fetch_position_data(cursor, username, start_time, end_time)
-    block_data = fetch_block_data(cursor, username, start_time, end_time)
-    obs_data = fetch_observation_data(cursor, username, start_time, end_time)
+    fetcher = DataFetcher(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD,
+        username, start_time, end_time)
 
-    cursor.close()
+    pos_data = fetcher.position_data
+    block_data = fetcher.block_data
+    obs_data = fetcher.observation_data
+
 
     print('\nGathering data:')
     print(f'\t{len(pos_data)} total positions')
