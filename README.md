@@ -12,8 +12,6 @@ For example, the images generated for user `Poi` between times `1570000000` and 
 
 Create a copy of `config-sample.json` and rename it to `config.json`. Fill in each field with the proper information.
 
-**Currently, world images _must_ be 1024x1024!**
-
 #### World Attributes
 
 | Key | Required | Type | Default | Description |
