@@ -4,29 +4,7 @@ from datetime import date
 from collections import Counter
 import os
 
-class Coordinate:
-    def __init__(self, sql_input):
-        self.world = sql_input[0]
-        self.x = sql_input[1]
-        self.y = sql_input[2]
-        self.z = sql_input[3]
-        self.data = sql_input[4]
-
-    def scaled_3d_coord(self):
-        """Scales the Coordinate to a scaled 3d coordinate
-
-        Returns:
-            (x, y, z) -- 3-d tuple containing the scaled x, y, z coordiantes
-        """
-        return (self.x + 512, self.y, self.z + 512)
-
-    def scaled_2d_coord(self):
-        """Scales the Coordinate to a 2d coordiante (excluding Y)
-
-        Returns:
-            (x, z) -- 2-d tuple containing the scaled x, z coordinates
-        """
-        return (self.x + 512, self.z + 512)
+from pathgenerator.models.coordinate import Coordinate
 
 def scaleToMap(coord):
     if len(coord) == 2:
@@ -152,7 +130,8 @@ def draw_positions(draw_dict, pos_data):
     prev_coord = None
     first_pos = True
     for entry in pos_data:
-        coord = Coordinate(entry)
+        # The coordinate's "data" is the time of the location
+        coord = Coordinate(*entry)
 
         if not prev_coord:
             prev_coord = coord
@@ -207,7 +186,8 @@ def draw_observations(draw_dict, obs_data):
         return counts
 
     for entry in obs_data:
-        coord = Coordinate(entry)
+        # The coordinate's "data" is the text of the observation
+        coord = Coordinate(*entry)
 
         if coord.world not in draw_dict:
             continue
@@ -236,7 +216,8 @@ def draw_blocks(draw_dict, block_data):
         return counts
 
     for entry in block_data:
-        coord = Coordinate(entry)
+        # The coordinate's "data" is a boolean whether or not the block was broken
+        coord = Coordinate(*entry)
         broken = coord.data
 
         if coord.world not in draw_dict:
