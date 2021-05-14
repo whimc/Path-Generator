@@ -7,44 +7,24 @@ For example, the images generated for user `Poi` between times `1570000000` and 
 ## Getting Started
 
 ### Config
-Create a copy of `config-empty.ini` and rename it to `config.ini`. Fill in each field with the proper information.
-The values for `world-ids` can be found within the `co_world` table from CoreProtect. The map images within `maps/` should have the same name as the worlds.
 
-<details>
-    <summary>Example config.ini</summary>
+**If you are still using a `.ini` config, run `python -m pathgenerator.convert_config` to convert it to the new JSON format!**
 
-```ini
-[database]
-host = 127.0.0.1
-database = test
-user = test
-password = password
+Create a copy of `config-sample.json` and rename it to `config.json`. Fill in each field with the proper information.
 
-[database-tables]
-coreprotect_blocks = co_block
-coreprotect_users = co_user
-coreprotect_worlds = co_world
-whimc_positions = whimc_player_positions
-whimc_observations = whimc_observations
+**Currently, world images _must_ be 1024x1024!**
 
-[imgur]
-client_id = xxx
-client_secret = xxx
-access_token = xxx
-refresh_token = xxx
-album_id = test
+#### World Attributes
 
-[world-ids]
-ColderSun_Cold = 1
-ColderSun_HabitableStrip = 2
-ColderSun_Hot = 3
-EarthControl = 4
-NoMoon = 5
-TiltedEarth_Frozen = 6
-TiltedEarth_JungleIsland = 7
-TiltedEarth_Melting = 8
-```
-</details>
+| Key | Required | Type | Default | Description |
+|-|-|-|-|-|
+| `display_name` | Yes | String | `n/a` | The name of the world that will be used for display purposes |
+| `world_name` | Yes | String | `n/a` | The name of the Minecraft world |
+| `coreprotect_id` | Yes | Integer | `n/a` | The ID of the world within CoreProtect |
+| `image_path` | Yes | String | `n/a` | Path to the image for this world |
+| `pixel_to_block_ratio` | No | Float | `1.0` | Ratio of pixels to blocks within the image |
+| `top_left_coordinate_x` | No | Integer | `-512` | The X coordinate (in Minecraft) of the top left pixel |
+| `top_left_coordinate_z` | No | Integer | `-512` | The Z coordinate (in Minecraft) of the top left pixel |
 
 ### Dependencies
 
