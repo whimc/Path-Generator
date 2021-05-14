@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from pathgenerator.runner import get_path_links
 
 def run():
-    parser = ArgumentParser()
+    parser = ArgumentParser(prog='pathgenerator')
     parser.add_argument('username', type=str, help='Username of the player')
     parser.add_argument('start_time', type=int, help='Unix start time')
     parser.add_argument('end_time', type=int, help='Unix end time')
