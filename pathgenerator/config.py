@@ -52,7 +52,7 @@ _get = lambda entry: get('database', entry)
 DB_HOST = _get('host')
 DB_DATABASE = _get('database')
 DB_USER = _get('user')
-DB_PASSWORD = _get('pasword')
+DB_PASSWORD = _get('password')
 
 # Get values from the database-tables section
 _get = lambda entry: get('database-tables', entry)
@@ -69,7 +69,7 @@ IMGUR_CLIENT_SECRET = _get('client_secret')
 IMGUR_ALBUM_ID = _get('album_id')
 
 # Load all the worlds
-WORLDS = List[World]
+WORLDS: List[World] = []
 for world_object in _config.get('worlds'):
     world = World(**world_object)
     if not os.path.exists(world.image_path):
