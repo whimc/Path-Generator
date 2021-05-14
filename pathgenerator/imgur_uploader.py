@@ -1,7 +1,6 @@
 import pyimgur
 import webbrowser
 from threading import Thread, Lock
-from configparser import RawConfigParser
 
 import pathgenerator.config as config
 
