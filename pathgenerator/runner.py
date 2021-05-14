@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw
 from threading import Thread, Lock
 
 import pathgenerator.map_drawer as map_drawer
-import pathgenerator.imgur_uploader as imgur_uploader
+import pathgenerator.utils.imgur_uploader as imgur_uploader
 from pathgenerator.config import WORLDS, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD
 
 OUTPUT_DIR = 'output'
@@ -31,7 +31,7 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
             draw_dict[world_name] = ImageDraw.Draw(with_footer)
             img_map[world_name] = with_footer
 
-    # exit('DEBUG')
+    exit('DEBUG')
 
     fetcher = DataFetcher(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD,
         username, start_time, end_time)

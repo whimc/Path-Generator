@@ -1,18 +1,17 @@
-import pyimgur
+from pyimgur import Imgur, Album
 import webbrowser
 from threading import Thread, Lock
 
 import pathgenerator.config as config
 
 
-mutex = Lock()
+MUTEX = Lock()
 
-
-def auth_with_pin(client):
+def auth_with_pin(client: Imgur):
     """Authorize Imgur client with a PIN
 
     Arguments:
-        client {pyimgur.Client} -- Imgur client
+        client {Imgur} -- Imgur client
 
     Returns:
         [tuple] -- (access_token, refresh_token) tuple
@@ -33,13 +32,13 @@ def auth_with_pin(client):
 def get_authed_client():
     refresh_token = config.get(config.IMGUR_SECTION, 'refresh_token')
     if refresh_token:
-        client = pyimgur.Imgur(
+        client = Imgur(
             client_id=config.IMGUR_CLIENT_ID,
             client_secret=config.IMGUR_CLIENT_SECRET,
             refresh_token=refresh_token
         )
     else:
-        client = pyimgur.Imgur(
+        client = Imgur(
             client_id=config.IMGUR_CLIENT_ID,
             client_secret=config.IMGUR_CLIENT_SECRET
         )
@@ -52,7 +51,7 @@ def get_authed_client():
         print(e)
         print('Access token failed to refresh')
         auth_with_pin(client)
-        client = pyimgur.Imgur(
+        client = Imgur(
             client_id=config.IMGUR_CLIENT_ID,
             client_secret=config.IMGUR_CLIENT_SECRET,
             refresh_token=config.get(config.IMGUR_SECTION, 'refresh_token')
@@ -60,12 +59,12 @@ def get_authed_client():
 
     return client
 
-def upload_image(client, album, img_path, img_name, links, overwrite=False):
+def upload_image(client: Imgur, album: Album, img_path, img_name, links, overwrite=False):
     """Uploads a single image to Imgur
 
     Arguments:
-        client {pyimgur.Client} -- Imgur client
-        album {pyimgur.Album} -- Imgur album
+        client {Imgur} -- Imgur client
+        album {Album} -- Imgur album
         img_path {str} -- Path of the image to upload
         img_name {str} -- Name of the image to upload
         links {list(str)} -- List of links of uploaded images
@@ -79,19 +78,19 @@ def upload_image(client, album, img_path, img_name, links, overwrite=False):
                 # print('Overriding pre-existing image!')
                 album.remove_images(image)
             else:
-                mutex.acquire()
+                MUTEX.acquire()
                 # print('FOUND %s: %s' % (image.title, image.link))
                 links[img_name] = image.link
-                mutex.release()
+                MUTEX.release()
                 return
 
     image = client.upload_image(path=img_path, title=img_name)
     album.add_images(image)
 
-    mutex.acquire()
+    MUTEX.acquire()
     # print('UPLOADED %s: %s' % (image.title, image.link))
     links[img_name] = image.link
-    mutex.release()
+    MUTEX.release()
 
 
 def upload_to_imgur(path_name_dict, overwrite=False):

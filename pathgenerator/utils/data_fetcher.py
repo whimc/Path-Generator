@@ -51,7 +51,7 @@ class DataFetcher:
 
     def _fetch_block_data(self):
         """
-        Fetches all block data.
+        Fetches all block data ordered by time.
         `action` corresponds to 0 if block was placed and 1 if block was broken.
         """
         self._cursor.execute(
