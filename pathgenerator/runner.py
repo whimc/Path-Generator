@@ -2,20 +2,19 @@ import mysql.connector
 import sys
 import os
 from PIL import Image, ImageDraw
-from configparser import ConfigParser
 from threading import Thread, Lock
 
 import pathgenerator.map_drawer as map_drawer
 import pathgenerator.imgur_uploader as imgur_uploader
 
-from pathgenerator.config import BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
-    POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
+from pathgenerator.config import DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, \
+    BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
 
 OUTPUT_DIR = 'output'
 mutex = Lock()
 
 def _maps_in_query():
-    return '(' + (','.join(f"'{world.name}'" for world in WORLDS)) + ')'
+    return '(' + (','.join(f"'{world.world_name}'" for world in WORLDS)) + ')'
 
 def fetch_position_data(cursor, username, start_time: int, end_time: int):
     """Fetches all position data for a user between two times.
@@ -102,42 +101,26 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     """
 
     creds = {
-        'host': None,
-        'database': None,
-        'user': None,
-        'password': None,
+        'host': DB_HOST,
+        'database': DB_DATABASE,
+        'user': DB_USER,
+        'password': DB_PASSWORD,
         'use_pure': True,
         'charset': 'utf8',
     }
-
-    parser = ConfigParser()
-    parser.read('config.ini')
-
-    invalid = False
-    for var, value in creds.items():
-        if value is not None:
-            continue
-        creds[var] = parser.get('database', var, fallback=None)
-
-        if not creds[var]:
-            print(f'"{var}" is not set within "./config.ini"!')
-            invalid = True
-
-    if invalid:
-        exit()
 
     draw_dict = dict()
     img_map = dict()
     for world in WORLDS:
         try:
-            print(f'finding {world.name}')
-            img_file = Image.open(world.img_path)
+            print(f'finding {world.display_name}')
+            img_file = Image.open(world.image_path)
             with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
                             color=(230, 230, 230))
             with_footer.paste(img_file)
 
-            draw_dict[world.name] = ImageDraw.Draw(with_footer)
-            img_map[world.name] = with_footer
+            draw_dict[world.world_name] = ImageDraw.Draw(with_footer)
+            img_map[world.world_name] = with_footer
         except Exception:
             print(sys.exc_info()[0])
 
