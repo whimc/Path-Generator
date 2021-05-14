@@ -1,15 +1,10 @@
-from PIL import ImageFont
+from PIL import ImageFont, ImageDraw
 import numpy as np
 from datetime import date
 from collections import Counter
 import os
 
 from pathgenerator.models.coordinate import Coordinate
-
-def scaleToMap(coord):
-    if len(coord) == 2:
-        return (coord[0] + 512, coord[1] + 512)
-    return (coord[0] + 512, coord[1], coord[2] + 512)
 
 
 def scale(val, src, dst):
@@ -18,13 +13,12 @@ def scale(val, src, dst):
     """
     return ((val - src[0]) / (src[1]-src[0])) * (dst[1]-dst[0]) + dst[0]
 
-
-def line(draw, coord1: Coordinate, coord2: Coordinate):
+def line(draw: ImageDraw, coord1: Coordinate, coord2: Coordinate):
     """Draws a line between two given Coordinates.
     The color of the line depends on the Y value (low = black, high = white)
 
     Arguments:
-        draw {Pillow.ImageDraw} -- The ImageDraw to draw on
+        draw {ImageDraw} -- The ImageDraw to draw on
         coord1 {Coordinate} -- Coordinate of the original position
         coord2 {Coordinate} -- Coordinate of the next position
     """
@@ -36,8 +30,8 @@ def line(draw, coord1: Coordinate, coord2: Coordinate):
     ll = 70.0
     ul = 120.0
 
-    pos1 = coord1.scaled_3d_coord()
-    pos2 = coord2.scaled_3d_coord()
+    pos1 = coord1.coord_3d
+    pos2 = coord2.coord_3d
     elev = max(ll, min(pos1[1], ul))
 
     r = int(scale(elev, (ll, ul), (0.0, 255.0)))
@@ -46,30 +40,28 @@ def line(draw, coord1: Coordinate, coord2: Coordinate):
 
     draw.line([(pos1[0], pos1[2]), (pos2[0], pos2[2])], (r, g, b), 4)
 
-
-def dot(draw, coord: Coordinate, color, size=2):
+def dot(draw: ImageDraw, coord: Coordinate, color: str, size: int = 2):
     """Draws a dot at the given map Coordinate with the given color.
 
     Arguments:
-        draw {PIL.ImageDraw} -- The ImageDraw to draw on
+        draw {ImageDraw} -- The ImageDraw to draw on
         coord {Coordinate} -- Where to the place the dot
         color {str} -- Pillow color to make the dot
 
     Keyword Arguments:
         size {int} -- Size of the dot (default: {2})
     """
-    pos = coord.scaled_2d_coord()
+    pos = coord.coord_2d
     x = (pos[0] - size, pos[1] - size)
     z = (pos[0] + size, pos[1] + size)
 
     draw.ellipse([x, z], fill=color)
 
-
-def heat_bubble(draw, coord: Coordinate, color):
+def heat_bubble(draw: ImageDraw, coord: Coordinate, color: str):
     """Draws a heat bubble at the given map Coordinate with the given color.
 
     Arguments:
-        draw {PIL.ImageDraw} -- The ImageDraw to draw on
+        draw {ImageDraw} -- The ImageDraw to draw on
         coord {Coordinate} -- Where to place the bubble
         color {str} -- Pillow color for bubble
     """
@@ -77,11 +69,11 @@ def heat_bubble(draw, coord: Coordinate, color):
     dot(draw, coord, color, 5)
 
 
-def drawText(draw, pos, text, color='white', size=20, outline=True):
+def drawText(draw: ImageDraw, pos: tuple, text: str, color: str = 'white', size: int = 20, outline: bool = True):
     """Draws text at the given x, y coodinates on the image
 
     Arguments:
-        draw {PIL.ImageDraw} -- The ImageDraw to write on
+        draw {ImageDraw} -- The ImageDraw to write on
         pos {tuple} -- (x, z) coordinate for the text
         text {str} -- Text to write
 
@@ -154,8 +146,8 @@ def draw_positions(draw_dict, pos_data):
             prev_coord = coord
             continue
 
-        cur = coord.scaled_3d_coord()
-        prev = prev_coord.scaled_3d_coord()
+        cur = coord.coord_3d
+        prev = prev_coord.coord_3d
 
         dist = np.linalg.norm(np.array(cur) - np.array(prev))
         counts[coord.world_name] += dist
@@ -194,7 +186,7 @@ def draw_observations(draw_dict, obs_data):
         map_draw = draw_dict[coord.world_name]
 
         dot(map_draw, coord, 'red')
-        drawText(map_draw, coord.scaled_2d_coord(), coord.data)
+        drawText(map_draw, coord.coord_2d, coord.data)
         counts[coord.world_name] += 1
 
     return counts
@@ -267,10 +259,6 @@ def draw_path_image(draw_dict, username, start_time, end_time,
     end_date = date.fromtimestamp(end_time).strftime('%b %d, %Y')
 
     if not gen_empty:
-        # keys = draw_dict.keys().copy()
-        # for name in keys:
-        #     if not distances[name] and not blocks[name] and not observations[name]:
-        #         draw_dict.pop(name)
         draw_dict = { key:val for key, val in draw_dict.items() if
             distances[key] or blocks[key] or observations[key] }
 

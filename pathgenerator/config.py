@@ -1,7 +1,10 @@
 import json
 import os
-from typing import List
+from typing import Dict, List
+from collections import defaultdict
+
 from pathgenerator.models.world import World
+
 
 PATH = 'config.json'
 
@@ -68,11 +71,12 @@ IMGUR_CLIENT_ID = _get('client_id')
 IMGUR_CLIENT_SECRET = _get('client_secret')
 IMGUR_ALBUM_ID = _get('album_id')
 
-# Load all the worlds
-WORLDS: List[World] = []
+# Since we support multiple images of the same world, we will construct a dict mapping the world
+#  name to a list of "World" objects
+WORLDS = defaultdict(lambda: [])
 for world_object in _config.get('worlds'):
     world = World(**world_object)
     if not os.path.exists(world.image_path):
         print(f'{world.image_path} does not exist!')
         exit()
-    WORLDS.append(world)
+    WORLDS[world.world_name].append(world)
