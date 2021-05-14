@@ -28,7 +28,7 @@
             "world_name": "world",
             "coreprotect_id": 1,
             "image_path": "maps/world.png",
-            "pixel_to_block_ratio": 1,
+            "pixel_to_block_ratio": 1.0,
             "top_left_coordinate_x": -512,
             "top_left_coordinate_z": -512
         }
