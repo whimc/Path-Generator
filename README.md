@@ -8,7 +8,7 @@ For example, the images generated for user `Poi` between times `1570000000` and 
 
 ### Config
 
-**If you are still using a `.ini` config, run `python -m pathgenerator.convert_config` to convert it to the new JSON format!**
+**If you are still using a `.ini` config, run `python -m pathgenerator.utils.convert_config` to convert it to the new JSON format!**
 
 Create a copy of `config-sample.json` and rename it to `config.json`. Fill in each field with the proper information.
 
