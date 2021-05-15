@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, List
+from typing import DefaultDict, List
 from collections import defaultdict
 
 from pathgenerator.models.world import World
@@ -73,7 +73,7 @@ IMGUR_ALBUM_ID = _get('album_id')
 
 # Since we support multiple images of the same world, we will construct a dict mapping the world
 #  name to a list of "World" objects
-WORLDS = defaultdict(lambda: [])
+WORLDS: DefaultDict[str, List[World]] = defaultdict(lambda: [])
 for world_object in _config.get('worlds'):
     world = World(**world_object)
     if not os.path.exists(world.image_path):

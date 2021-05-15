@@ -1,7 +1,7 @@
 import os
 from pathgenerator.utils.data_fetcher import DataFetcher
 from PIL import Image, ImageDraw
-from threading import Thread, Lock
+from threading import Thread
 
 import pathgenerator.map_drawer as map_drawer
 import pathgenerator.utils.imgur_uploader as imgur_uploader
@@ -18,9 +18,7 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
         start_time {int} -- Unix start time
         end_time {int} -- Unix end time
     """
-    draw_dict = dict()
-    img_map = dict()
-    for world_name, worlds in WORLDS.items():
+    for worlds in WORLDS.values():
         for world in worlds:
             print(f'finding {world.display_name}')
             img_file = Image.open(world.image_path)
@@ -28,10 +26,8 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
                             color=(230, 230, 230))
             with_footer.paste(img_file)
 
-            draw_dict[world_name] = ImageDraw.Draw(with_footer)
-            img_map[world_name] = with_footer
-
-    exit('DEBUG')
+            world.draw_obj = ImageDraw.Draw(with_footer)
+            world.img_obj = with_footer
 
     fetcher = DataFetcher(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD,
         username, start_time, end_time)
@@ -47,20 +43,17 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     print(f'\t{len(obs_data)} total observations')
     print('')
 
+    exit('DEBUG')
+
     draw_dict = map_drawer.draw_path_image(draw_dict, username, start_time, end_time,
                                 pos_data, block_data, obs_data, gen_empty)
 
     img_map = { key:val for key, val in img_map.items() if
         key in draw_dict }
 
-    if not os.path.exists(OUTPUT_DIR):
-        os.mkdir(OUTPUT_DIR)
-
-    if not os.path.exists(os.path.join(OUTPUT_DIR, username)):
-        os.mkdir(os.path.join(OUTPUT_DIR, username))
-
-    if not os.path.exists(os.path.join(OUTPUT_DIR, username, f'{start_time}-{end_time}')):
-        os.mkdir(os.path.join(OUTPUT_DIR, username, f'{start_time}-{end_time}'))
+    user_output = os.path.join(OUTPUT_DIR, username, f"{start_time}-{end_time}")
+    if not os.path.exists(user_output):
+        os.makedirs(user_output)
 
     if not img_map.keys():
         return
@@ -68,8 +61,8 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     print('\nSaving images:')
     threads = []
     for (name, img) in img_map.items():
-        gen_path = os.path.join(OUTPUT_DIR, f'{name}.png')
-        spec_path = os.path.join(OUTPUT_DIR, username, f'{start_time}-{end_time}', f'{name}.png')
+        gen_path = os.path.join(OUTPUT_DIR, f"{name}.png")
+        spec_path = os.path.join(user_output, f"{name}.png")
 
         thread = Thread(target=save_image, args=(img, name, gen_path, spec_path))
         threads.append(thread)
