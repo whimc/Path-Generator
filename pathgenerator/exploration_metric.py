@@ -9,11 +9,11 @@ from pathgenerator.utils.data_fetcher import DataFetcher
 from pathgenerator.map_drawer import scale
 
 
-def get_exploration_metrics(position_data):
+def get_exploration_metrics(data):
     map_matrices = {world.display_name:np.zeros((10, 10)) for world in ALL_WORLDS}
 
-    for pos in position_data:
-        coord = Coordinate(*pos)
+    for entry in data:
+        coord = Coordinate(*entry)
 
         for world in WORLDS[coord.world_name]:
             coord.world = world
@@ -31,9 +31,16 @@ def get_exploration_metrics(position_data):
 
     return map_matrices
 
+def write_metrics(output_file, user_metrics):
+    csv_writer = csv.writer(output_file)
+    csv_writer.writerow(['username'] + [world.display_name for world in ALL_WORLDS])
+    for user, metrics in user_metrics.items():
+        csv_writer.writerow([user] + [np.sum(metrics[world.display_name]) for world in ALL_WORLDS])
+
 if __name__ == '__main__':
     parser = ArgumentParser(prog='pathgenerator.exploration_metric')
-    parser.add_argument('output', type=FileType('w'), help='Output file name')
+    parser.add_argument('position_output', type=FileType('w'), help='Output for exploration metrics')
+    parser.add_argument('observation_output', type=FileType('w'), help='Output for observation metrics')
     parser.add_argument('start_time', type=int, help='Unix start time')
     parser.add_argument('end_time', type=int, help='Unix end time')
     parser.add_argument('username', nargs='+', help='Username of the player')
@@ -48,16 +55,24 @@ if __name__ == '__main__':
     for world in ALL_WORLDS:
         world.img_obj = Image.open(world.image_path)
 
-    metrics = dict()
+    # Fetch all data for the given users
+    user_data = dict()
     for username in usernames:
         print(f"Fetching data for {username}")
-        fetcher = DataFetcher(username, start_time, end_time)
-        metrics[username] = get_exploration_metrics(fetcher.position_data)
+        user_data[username] = DataFetcher(username, start_time, end_time)
 
-    output = options.get('output')
-    csv_writer = csv.writer(output)
-    csv_writer.writerow(['username'] + [world.display_name for world in ALL_WORLDS])
+    # Generate the exploration metrics
+    exploration_metrics = dict()
+    for username in usernames:
+        data = user_data.get(username)
+        exploration_metrics[username] = get_exploration_metrics(data.position_data)
 
-    # Write all users to the csv
-    for user, metrics in metrics.items():
-        csv_writer.writerow([user] + [np.sum(metrics[world.display_name]) for world in ALL_WORLDS])
+    # Generate the observation metrics
+    observation_metrics = dict()
+    for username in usernames:
+        data = user_data.get(username)
+        observation_metrics[username] = get_exploration_metrics(data.observation_data)
+
+    # Generate the CSV files for the metrics
+    write_metrics(options.get('position_output'), exploration_metrics)
+    write_metrics(options.get('observation_output'), observation_metrics)
