@@ -271,7 +271,7 @@ def draw_path_image(username, start_time, end_time,
         if not gen_empty and distances[name] == 0:
             continue
 
-        height = 1034
+        height = world.img_obj.height - 200 + 10
         vSpace = 30
         drawText(draw, (10, height), "Username:", 'black', 25)
         drawText(draw, (10 + 140, height), username, 'red', 25)
