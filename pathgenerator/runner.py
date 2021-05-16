@@ -28,8 +28,7 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
         world.draw_obj = ImageDraw.Draw(with_footer)
         world.img_obj = with_footer
 
-    fetcher = DataFetcher(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD,
-        username, start_time, end_time)
+    fetcher = DataFetcher(username, start_time, end_time)
 
     pos_data = fetcher.position_data
     block_data = fetcher.block_data
