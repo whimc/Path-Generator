@@ -27,7 +27,9 @@ class Coordinate:
             (x, z) -- 2-d tuple containing the scaled x, z coordinates
         """
         scale = self.world.pixel_to_block_ratio
-        return ((self.x - self.world.top_left_coordinate_x) * scale, (self.z - self.world.top_left_coordinate_z) * scale)
+        x = (self.x - self.world.top_left_coordinate_x) * scale
+        z = (self.z - self.world.top_left_coordinate_z) * scale
+        return (x, z)
 
     @property
     def coord_3d(self):
