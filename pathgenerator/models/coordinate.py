@@ -15,20 +15,25 @@ class Coordinate:
     y: float
     z: float
     data: typing.Any
-    world: World
+    world: World = None
 
     @property
     def coord_2d(self):
-        """Scales the Coordinate to a 2d coordinate (excluding Y)
+        """
+        Scales the Coordinate to a 2d coordinate (excluding Y).
+        MUST have the 'world' attribute set!
 
         Returns:
             (x, z) -- 2-d tuple containing the scaled x, z coordinates
         """
-        return (self.x - self.world.top_left_coordinate_x, self.z - self.world.top_left_coordinate_z)
+        scale = self.world.pixel_to_block_ratio
+        return ((self.x - self.world.top_left_coordinate_x) * scale, (self.z - self.world.top_left_coordinate_z) * scale)
 
     @property
     def coord_3d(self):
-        """Scales the Coordinate to a scaled 3d coordinate
+        """
+        Scales the Coordinate to a scaled 3d coordinate
+        MUST have the 'world' attribute set!
 
         Returns:
             (x, y, z) -- 3-d tuple containing the scaled x, y, z coordiantes

@@ -5,6 +5,7 @@ from collections import Counter
 import os
 
 from pathgenerator.models.coordinate import Coordinate
+from pathgenerator.config import ALL_WORLDS, WORLDS
 
 
 def scale(val, src, dst):
@@ -88,10 +89,6 @@ def drawText(draw: ImageDraw, pos: tuple, text: str, color: str = 'white', size:
 
     shadowColor = 'black'
     font = ImageFont.truetype(os.path.join('.', 'arial.ttf'), size)
-    # try:
-    #     font = ImageFont.truetype('arial.ttf', size)
-    # except:
-    #     font = None
 
     if outline:
         draw.text((x-1, y), text, font=font, fill=shadowColor)
@@ -102,17 +99,16 @@ def drawText(draw: ImageDraw, pos: tuple, text: str, color: str = 'white', size:
     draw.text(pos, text, color, font=font)
 
 
-def draw_positions(draw_dict, pos_data):
+def draw_positions(pos_data):
     """Draws positions onto map images. First position is a green dot,
     last position is a red dot. Elevation changes line colors.
     (low = black, high = white)
 
     Arguments:
-        draw_dict {dict} -- {'world_name': ImageDraw} dictionary
         pos_data {list} -- (world_name, x, y, z, time) data tuple list
 
     Returns:
-        dict -- Dictionary keep track of distance traveled per world
+        dict -- Dictionary keeping track of distance traveled per world
     """
     counts = Counter()
 
@@ -122,47 +118,55 @@ def draw_positions(draw_dict, pos_data):
     prev_coord = None
     first_pos = True
     for entry in pos_data:
-        # The coordinate's "data" is the time of the location
         coord = Coordinate(*entry)
 
         if not prev_coord:
             prev_coord = coord
             continue
 
+        # The coordinate's "data" is the time of the location
+        # Don't draw a line if the two positions happend more than 10 seconds apart
         if coord.data - prev_coord.data > 10:
             prev_coord = coord
             continue
 
-        if coord.world_name not in draw_dict:
-            continue
-        map_draw = draw_dict[coord.world_name]
+        different_world = coord.world_name != prev_coord.world_name
 
-        if coord.world_name != prev_coord.world_name:
-            # Finish off the previous image path
-            dot(draw_dict[prev_coord.world_name], prev_coord, 'red')
+        for world in WORLDS[coord.world_name]:
+            coord.world = world
+            prev_coord.world = world
 
+            # If we switched maps, finish the path by drawing a red dot at the stopping position
+            if different_world:
+                # Finish off the previous image path
+                dot(prev_coord.world.draw_obj, prev_coord, 'red')
+                continue
+
+            dist = np.linalg.norm(np.array(coord.coord_3d) - np.array(prev_coord.coord_3d))
+            counts[world.display_name] += dist
+
+            map_draw = world.draw_obj
+            line(map_draw, prev_coord, coord)
+
+            # Draw a green dot at the initial position
+            if first_pos:
+                dot(map_draw, prev_coord, 'green')
+
+        if first_pos:
+            first_pos = False
+
+        if different_world:
             prev_coord = None
             first_pos = True
-            prev_coord = coord
-            continue
 
-        cur = coord.coord_3d
-        prev = prev_coord.coord_3d
-
-        dist = np.linalg.norm(np.array(cur) - np.array(prev))
-        counts[coord.world_name] += dist
-
-        line(map_draw, prev_coord, coord)
-        if first_pos:
-            dot(map_draw, prev_coord, 'green')
-            first_pos = False
         prev_coord = coord
 
-    dot(draw_dict[prev_coord.world_name], prev_coord, 'red')
+    # Finish off the last map
+    dot(prev_coord.world.draw_obj, prev_coord, 'red')
 
     return counts
 
-def draw_observations(draw_dict, obs_data):
+def draw_observations(obs_data):
     """Draws observations onto map images
 
     Arguments:
@@ -178,21 +182,22 @@ def draw_observations(draw_dict, obs_data):
         return counts
 
     for entry in obs_data:
-        # The coordinate's "data" is the text of the observation
         coord = Coordinate(*entry)
 
-        if coord.world_name not in draw_dict:
-            continue
-        map_draw = draw_dict[coord.world_name]
+        for world in WORLDS[coord.world_name]:
+            coord.world = world
 
-        dot(map_draw, coord, 'red')
-        drawText(map_draw, coord.coord_2d, coord.data)
-        counts[coord.world_name] += 1
+            map_draw = world.draw_obj
+            dot(map_draw, coord, 'red')
+
+            # The coordinate's "data" is the text of the observation
+            drawText(map_draw, coord.coord_2d, coord.data)
+            counts[world.display_name] += 1
 
     return counts
 
 
-def draw_blocks(draw_dict, block_data):
+def draw_blocks(block_data):
     """Draws blocks onto map images
 
     Arguments:
@@ -208,30 +213,28 @@ def draw_blocks(draw_dict, block_data):
         return counts
 
     for entry in block_data:
-        # The coordinate's "data" is a boolean whether or not the block was broken
         coord = Coordinate(*entry)
-        broken = coord.data
 
-        if coord.world_name not in draw_dict:
-            continue
-        map_draw = draw_dict[coord.world_name]
+        # The coordinate's "data" is a boolean whether or not the block was broken
+        broken = coord.data
 
         color = (0, 255, 0, 100)
         if broken:
             color = (255, 0, 0, 100)
 
-        heat_bubble(map_draw, coord, color)
-        counts[coord.world_name] += 1
+        for world in WORLDS[coord.world_name]:
+            coord.world = world
+            heat_bubble(world.draw_obj, coord, color)
+            counts[world.display_name] += 1
 
     return counts
 
 
-def draw_path_image(draw_dict, username, start_time, end_time,
+def draw_path_image(username, start_time, end_time,
                     pos_data, block_data, obs_data, gen_empty=False):
     """Creates the completed image with all the gathered data.
 
     Arguments:
-        draw_dict {dict} -- {'world_name': ImageDraw} dictionary
         username {str} -- Username of player
         start_time {int} -- Start Unix time
         end_time {int} -- End Unix time
@@ -243,13 +246,13 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         gen_empty {bool} -- Whether to generate empty images or not (default: {False})
 
     Returns:
-        {dict} -- {'world_name': ImageDraw} dictionary after parsing with gen_empty
+        {list} -- List of 'World's that were drawn
     """
 
     # Counts to display per map
-    distances = draw_positions(draw_dict, pos_data)
-    blocks = draw_blocks(draw_dict, block_data)
-    observations = draw_observations(draw_dict, obs_data)
+    distances = draw_positions(pos_data)
+    blocks = draw_blocks(block_data)
+    observations = draw_observations(obs_data)
 
     # Duration in minutes
     duration = round((end_time - start_time) / 60, 2)
@@ -258,11 +261,16 @@ def draw_path_image(draw_dict, username, start_time, end_time,
     start_date = date.fromtimestamp(start_time).strftime('%b %d, %Y')
     end_date = date.fromtimestamp(end_time).strftime('%b %d, %Y')
 
-    if not gen_empty:
-        draw_dict = { key:val for key, val in draw_dict.items() if
-            distances[key] or blocks[key] or observations[key] }
+    drawn_worlds = []
 
-    for name, draw in draw_dict.items():
+    for world in ALL_WORLDS:
+        name = world.display_name
+        draw = world.draw_obj
+
+        # Skip generating empty maps
+        if not gen_empty and distances[name] == 0:
+            continue
+
         height = 1034
         vSpace = 30
         drawText(draw, (10, height), "Username:", 'black', 25)
@@ -290,4 +298,6 @@ def draw_path_image(draw_dict, username, start_time, end_time,
         drawText(draw, (10 + 235, height), "%s observations" %
                 observations[name], 'red', 25)
 
-    return draw_dict
+        drawn_worlds.append(world)
+
+    return drawn_worlds

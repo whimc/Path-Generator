@@ -1,11 +1,13 @@
 import mysql.connector
 from mysql.connector.cursor import CursorBase
 
-from pathgenerator.config import DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, \
-    BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
+from pathgenerator.config import ALL_WORLDS, BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
+    POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
 
 
 MAPS_IN_QUERY = '(' + (','.join(f"'{world}'" for world in WORLDS)) + ')'
+
+MAP_IDS_IN_QUERY = '(' + (','.join(list({str(world.coreprotect_id) for world in ALL_WORLDS}))) + ')'
 
 class DataFetcher:
     """
@@ -61,7 +63,7 @@ class DataFetcher:
             f"FROM {BLOCKS_TABLE} as b "
             f"WHERE time BETWEEN {self._start_time} AND {self._end_time} "
             f"AND user = (SELECT rowid FROM {USERS_TABLE} WHERE user = '{self._username}') "
-            f"AND wid IN {MAPS_IN_QUERY} "
+            f"AND wid IN {MAP_IDS_IN_QUERY} "
             "ORDER BY time ASC"
         )
         return self._cursor.fetchall()

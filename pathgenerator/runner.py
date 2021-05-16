@@ -5,7 +5,7 @@ from threading import Thread
 
 import pathgenerator.map_drawer as map_drawer
 import pathgenerator.utils.imgur_uploader as imgur_uploader
-from pathgenerator.config import WORLDS, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD
+from pathgenerator.config import ALL_WORLDS, WORLDS, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD
 
 OUTPUT_DIR = 'output'
 
@@ -18,16 +18,15 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
         start_time {int} -- Unix start time
         end_time {int} -- Unix end time
     """
-    for worlds in WORLDS.values():
-        for world in worlds:
-            print(f'finding {world.display_name}')
-            img_file = Image.open(world.image_path)
-            with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
-                            color=(230, 230, 230))
-            with_footer.paste(img_file)
+    for world in ALL_WORLDS:
+        print(f'finding {world.display_name}')
+        img_file = Image.open(world.image_path)
+        with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
+                        color=(230, 230, 230))
+        with_footer.paste(img_file)
 
-            world.draw_obj = ImageDraw.Draw(with_footer)
-            world.img_obj = with_footer
+        world.draw_obj = ImageDraw.Draw(with_footer)
+        world.img_obj = with_footer
 
     fetcher = DataFetcher(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD,
         username, start_time, end_time)
@@ -36,31 +35,29 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
     block_data = fetcher.block_data
     obs_data = fetcher.observation_data
 
-
     print('\nGathering data:')
     print(f'\t{len(pos_data)} total positions')
     print(f'\t{len(block_data)} total blocks')
     print(f'\t{len(obs_data)} total observations')
     print('')
 
-    exit('DEBUG')
-
-    draw_dict = map_drawer.draw_path_image(draw_dict, username, start_time, end_time,
+    drawn_worlds = map_drawer.draw_path_image(username, start_time, end_time,
                                 pos_data, block_data, obs_data, gen_empty)
-
-    img_map = { key:val for key, val in img_map.items() if
-        key in draw_dict }
 
     user_output = os.path.join(OUTPUT_DIR, username, f"{start_time}-{end_time}")
     if not os.path.exists(user_output):
         os.makedirs(user_output)
 
-    if not img_map.keys():
+    # If no maps were generated, do nothing
+    if not drawn_worlds:
         return
 
     print('\nSaving images:')
     threads = []
-    for (name, img) in img_map.items():
+    for world in drawn_worlds:
+        name = world.display_name
+        img = world.img_obj
+
         gen_path = os.path.join(OUTPUT_DIR, f"{name}.png")
         spec_path = os.path.join(user_output, f"{name}.png")
 

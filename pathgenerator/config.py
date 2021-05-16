@@ -51,14 +51,17 @@ def validate_config():
 validate_config()
 
 # Get values from the database section
-_get = lambda entry: get('database', entry)
+
+DATABASE_SECTION = 'database'
+_get = lambda entry: get(DATABASE_SECTION, entry)
 DB_HOST = _get('host')
 DB_DATABASE = _get('database')
 DB_USER = _get('user')
 DB_PASSWORD = _get('password')
 
 # Get values from the database-tables section
-_get = lambda entry: get('database-tables', entry)
+DATABASE_TABLES_SECTION = 'database-tables'
+_get = lambda entry: get(DATABASE_TABLES_SECTION, entry)
 BLOCKS_TABLE = _get('coreprotect_blocks')
 USERS_TABLE = _get('coreprotect_users')
 WORLDS_TABLE = _get('coreprotect_worlds')
@@ -66,7 +69,8 @@ POSITIONS_TABLE = _get('whimc_positions')
 OBSERVATIONS_TABLE = _get('whimc_observations')
 
 # Get values from the imgur section
-_get = lambda entry: get('imgur', entry)
+IMGUR_SECTION = 'imgur'
+_get = lambda entry: get(IMGUR_SECTION, entry)
 IMGUR_CLIENT_ID = _get('client_id')
 IMGUR_CLIENT_SECRET = _get('client_secret')
 IMGUR_ALBUM_ID = _get('album_id')
@@ -74,9 +78,11 @@ IMGUR_ALBUM_ID = _get('album_id')
 # Since we support multiple images of the same world, we will construct a dict mapping the world
 #  name to a list of "World" objects
 WORLDS: DefaultDict[str, List[World]] = defaultdict(lambda: [])
+ALL_WORLDS: List[World] = []
 for world_object in _config.get('worlds'):
     world = World(**world_object)
     if not os.path.exists(world.image_path):
         print(f'{world.image_path} does not exist!')
         exit()
     WORLDS[world.world_name].append(world)
+    ALL_WORLDS.append(world)
