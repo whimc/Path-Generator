@@ -12,6 +12,8 @@ For example, the images generated for user `Poi` between times `1570000000` and 
 
 Create a copy of `config-sample.json` and rename it to `config.json`. Fill in each field with the proper information.
 
+If you are using downloads of our worlds, the only part of the `worlds` section you have to modify is the `coreprotect_id` field.
+
 #### World Attributes
 
 | Key | Required | Type | Default | Description |
