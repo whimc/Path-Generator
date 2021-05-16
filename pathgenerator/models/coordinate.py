@@ -42,3 +42,12 @@ class Coordinate:
         """
         x, z = self.coord_2d
         return (x, self.y, z)
+
+    @property
+    def is_inside_view(self):
+        """Determines if this coordinate is inside of the World's view"""
+        min_x = self.world.top_left_coordinate_x
+        min_z = self.world.top_left_coordinate_z
+        max_x = min_x + self.world.img_obj.width / self.world.pixel_to_block_ratio
+        max_z = min_z + self.world.img_obj.height / self.world.pixel_to_block_ratio
+        return min_x < self.x < max_x and min_z < self.z < max_z
