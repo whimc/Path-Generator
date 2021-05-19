@@ -51,10 +51,6 @@ if __name__ == '__main__':
     end_time = options.get('end_time')
     usernames = options.get('username')
 
-    # Load all the world images
-    for world in ALL_WORLDS:
-        world.img_obj = Image.open(world.image_path)
-
     # Fetch all data for the given users
     user_data = dict()
     for username in usernames:

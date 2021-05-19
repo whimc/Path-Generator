@@ -1,6 +1,7 @@
 import os
 from pathgenerator.utils.data_fetcher import DataFetcher
-from PIL import Image, ImageDraw
+from PIL import Image
+from PIL.ImageDraw import ImageDraw
 from threading import Thread
 
 import pathgenerator.utils.map_drawer as map_drawer
@@ -18,16 +19,6 @@ def generate_images(username, start_time: int, end_time: int, gen_empty=False):
         start_time {int} -- Unix start time
         end_time {int} -- Unix end time
     """
-    for world in ALL_WORLDS:
-        print(f'finding {world.display_name}')
-        img_file = Image.open(world.image_path)
-        with_footer = Image.new('RGB', (img_file.width, img_file.height + 200),
-                        color=(230, 230, 230))
-        with_footer.paste(img_file)
-
-        world.draw_obj = ImageDraw.Draw(with_footer)
-        world.img_obj = with_footer
-
     fetcher = DataFetcher(username, start_time, end_time)
 
     pos_data = fetcher.position_data
