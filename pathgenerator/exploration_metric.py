@@ -6,7 +6,7 @@ import csv
 from pathgenerator.models.coordinate import Coordinate
 from pathgenerator.config import ALL_WORLDS, WORLDS
 from pathgenerator.utils.data_fetcher import DataFetcher
-from pathgenerator.map_drawer import scale
+from pathgenerator.utils.map_drawer import scale
 
 
 def get_exploration_metrics(data):
