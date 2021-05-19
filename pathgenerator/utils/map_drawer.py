@@ -1,4 +1,5 @@
-from PIL import ImageFont, ImageDraw
+from PIL import ImageFont, Image, ImageDraw as ID
+from PIL.ImageDraw import ImageDraw
 import numpy as np
 from datetime import date
 from collections import Counter
@@ -13,6 +14,11 @@ def scale(val, src, dst):
     Scale the given value from the scale of src to the scale of dst.
     """
     return ((val - src[0]) / (src[1]-src[0])) * (dst[1]-dst[0]) + dst[0]
+
+def resized_copy(image: Image.Image, width) -> Image.Image:
+    wpercent = width / image.size[0]
+    hsize = int(image.size[1] * wpercent)
+    return image.resize((width, hsize), Image.ANTIALIAS)
 
 def line(draw: ImageDraw, coord1: Coordinate, coord2: Coordinate):
     """Draws a line between two given Coordinates.
@@ -35,11 +41,10 @@ def line(draw: ImageDraw, coord1: Coordinate, coord2: Coordinate):
     pos2 = coord2.coord_3d
     elev = max(ll, min(pos1[1], ul))
 
-    r = int(scale(elev, (ll, ul), (0.0, 255.0)))
-    g = int(scale(elev, (ll, ul), (0.0, 255.0)))
-    b = int(scale(elev, (ll, ul), (0.0, 255.0)))
+    # The RGB tuple to make the gray for the given elevation
+    gray = (int(scale(elev, (ll, ul), (0.0, 255.0))), ) * 3
 
-    draw.line([(pos1[0], pos1[2]), (pos2[0], pos2[2])], (r, g, b), 4)
+    draw.line([(pos1[0], pos1[2]), (pos2[0], pos2[2])], gray, 4)
 
 def dot(draw: ImageDraw, coord: Coordinate, color: str, size: int = 2):
     """Draws a dot at the given map Coordinate with the given color.
@@ -265,34 +270,43 @@ def draw_path_image(username, start_time, end_time,
 
     for world in ALL_WORLDS:
         name = world.display_name
-        draw = world.draw_obj
 
         # Skip generating empty maps
         if not gen_empty and distances[name] == 0:
             continue
 
+        # Resize the image to have a width of 1024 and add space for the footer
+        resized = resized_copy(world.img_obj, 1024)
+        with_footer = Image.new('RGB', (resized.width, resized.height + 200), color=(230, 230, 230))
+        with_footer.paste(resized)
+
+        world.img_obj = with_footer
+        draw = world.draw_obj = ID.Draw(with_footer)
+        draw = world.draw_obj
+
         height = world.img_obj.height - 200 + 10
-        vSpace = 30
+        vertical_space = 30
+
         drawText(draw, (10, height), "Username:", 'black', 25)
         drawText(draw, (10 + 140, height), username, 'red', 25)
-        height += vSpace
+        height += vertical_space
 
         drawText(draw, (10, height), "Duration:", 'black', 25)
         drawText(draw, (10 + 110, height), "%s minutes" % duration, 'red', 25)
-        height += vSpace
+        height += vertical_space
 
         drawText(draw, (10, height), "Start and end time:", 'black', 25)
         drawText(draw, (10 + 225, height), "%s through %s" %
                 (start_date, end_date), 'red', 25)
-        height += vSpace
+        height += vertical_space
 
         drawText(draw, (10, height), "Distance Traveled:", 'black', 25)
         drawText(draw, (10 + 220, height), "%s blocks" % int(distances[name]), 'red', 25)
-        height += vSpace
+        height += vertical_space
 
         drawText(draw, (10, height), "Blocks Interacted:", 'black', 25)
         drawText(draw, (10 + 210, height), "%s blocks" % blocks[name], 'red', 25)
-        height += vSpace
+        height += vertical_space
 
         drawText(draw, (10, height), "Observations made:", 'black', 25)
         drawText(draw, (10 + 235, height), "%s observations" %
