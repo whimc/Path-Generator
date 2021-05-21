@@ -1,6 +1,6 @@
 import markdown2
 
-TEMPLATE = TEMPLATE = """<!DOCTYPE html>
+TEMPLATE = """<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
