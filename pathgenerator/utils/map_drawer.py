@@ -6,7 +6,7 @@ from collections import Counter
 import os
 
 from pathgenerator.models.coordinate import Coordinate
-from pathgenerator.config import ALL_WORLDS, WORLDS
+from pathgenerator.config import ALL_WORLDS, WORLDS, reload_world_images
 
 
 def scale(val, src, dst):
@@ -253,6 +253,7 @@ def draw_path_image(username, start_time, end_time,
     Returns:
         {list} -- List of 'World's that were drawn
     """
+    reload_world_images()
 
     # Counts to display per map
     distances = draw_positions(pos_data)
