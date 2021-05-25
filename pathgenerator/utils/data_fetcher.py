@@ -1,8 +1,8 @@
 import mysql.connector
 from mysql.connector.cursor import CursorBase
 
-from pathgenerator.config import ALL_WORLDS, BLOCKS_TABLE, USERS_TABLE, WORLDS_TABLE, \
-    POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
+from pathgenerator.config import DB_DATABASE, DB_HOST, DB_PASSWORD, DB_USER, USERS_TABLE, \
+    WORLDS_TABLE, ALL_WORLDS, BLOCKS_TABLE, POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
 
 
 MAPS_IN_QUERY = '(' + (','.join(f"'{world}'" for world in WORLDS)) + ')'
@@ -15,12 +15,12 @@ class DataFetcher:
     Connects to the configured MySQL database for this information.
     """
 
-    def __init__(self, host, database, user, password, username, start_time, end_time):
+    def __init__(self, username, start_time, end_time):
         creds = {
-            'host': host,
-            'database': database,
-            'user': user,
-            'password': password,
+            'host': DB_HOST,
+            'database': DB_DATABASE,
+            'user': DB_USER,
+            'password': DB_PASSWORD,
             'use_pure': True,
             'charset': 'utf8',
         }

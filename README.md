@@ -53,6 +53,13 @@ To locally run the generator:
 $ python -m pathgenerator [-h] [-n] [-o] [-e] <username> <start_time> <end_time>
 ```
 
+## Exploration Metrics
+Exploration metrics 'draw' a 10x10 grid on maps. If a user explores one of those tiles or makes an observation on them,
+it is marked. The sum of marked tiles is taken and a CSV is created. To get these metrics, run the following:
+```
+$ python -m pathgenerator.exploration_metric <position output file> <observation output file> <start time> <end time> <username> [usernames ...]
+```
+
 ### Options
 | Option                   | Description                                                  |
 |--------------------------|--------------------------------------------------------------|
