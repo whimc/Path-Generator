@@ -6,19 +6,10 @@ from collections import Counter
 import os
 
 from pathgenerator.models.coordinate import Coordinate
+from pathgenerator.exploration_metric import get_metrics
 from pathgenerator.config import ALL_WORLDS, WORLDS, reload_world_images
+from pathgenerator.utils import scale, resized_copy
 
-
-def scale(val, src, dst):
-    """
-    Scale the given value from the scale of src to the scale of dst.
-    """
-    return ((val - src[0]) / (src[1]-src[0])) * (dst[1]-dst[0]) + dst[0]
-
-def resized_copy(image: Image.Image, width) -> Image.Image:
-    wpercent = width / image.size[0]
-    hsize = int(image.size[1] * wpercent)
-    return image.resize((width, hsize), Image.ANTIALIAS)
 
 def line(draw: ImageDraw, coord1: Coordinate, coord2: Coordinate):
     """Draws a line between two given Coordinates.
@@ -260,6 +251,9 @@ def draw_path_image(username, start_time, end_time,
     blocks = draw_blocks(block_data)
     observations = draw_observations(obs_data)
 
+    exploration_metrics = get_metrics(pos_data)
+    observation_metrics = get_metrics(obs_data)
+
     # Duration in minutes
     duration = round((end_time - start_time) / 60, 2)
 
@@ -277,41 +271,62 @@ def draw_path_image(username, start_time, end_time,
             continue
 
         # Resize the image to have a width of 1024 and add space for the footer
+        footer_height = 215
         resized = resized_copy(world.img_obj, 1024)
-        with_footer = Image.new('RGB', (resized.width, resized.height + 200), color=(230, 230, 230))
+        with_footer = Image.new('RGB', (resized.width, resized.height + footer_height), color=(230, 230, 230))
         with_footer.paste(resized)
 
         world.img_obj = with_footer
         draw = world.draw_obj = ID.Draw(with_footer)
         draw = world.draw_obj
 
-        height = world.img_obj.height - 200 + 10
+        height = world.img_obj.height - footer_height
         vertical_space = 30
 
-        drawText(draw, (10, height), "Username:", 'black', 25)
-        drawText(draw, (10 + 140, height), username, 'red', 25)
+        text = lambda width, text, color: drawText(draw, (10 + width, height), text, color, 25)
+
+        # drawText(draw, (10, height), "Username:", 'black', 25)
+        # drawText(draw, (10 + 140, height), username, 'red', 25)
+        text(0, 'Username:', 'black')
+        text(140, username, 'red')
         height += vertical_space
 
-        drawText(draw, (10, height), "Duration:", 'black', 25)
-        drawText(draw, (10 + 110, height), "%s minutes" % duration, 'red', 25)
+        # drawText(draw, (10, height), "Duration:", 'black', 25)
+        # drawText(draw, (10 + 110, height), "%s minutes" % duration, 'red', 25)
+        text(0, 'Duration:', 'black')
+        text(110, f"{duration} minutes", 'red')
         height += vertical_space
 
-        drawText(draw, (10, height), "Start and end time:", 'black', 25)
-        drawText(draw, (10 + 225, height), "%s through %s" %
-                (start_date, end_date), 'red', 25)
+        # drawText(draw, (10, height), "Start and end time:", 'black', 25)
+        # drawText(draw, (10 + 225, height), "%s through %s" %
+        #         (start_date, end_date), 'red', 25)
+        text(0, 'Start and End Time:', 'black')
+        text(230, f"{start_date} through {end_date}", 'red')
         height += vertical_space
 
-        drawText(draw, (10, height), "Distance Traveled:", 'black', 25)
-        drawText(draw, (10 + 220, height), "%s blocks" % int(distances[name]), 'red', 25)
+        # drawText(draw, (10, height), "Distance Traveled:", 'black', 25)
+        # drawText(draw, (10 + 220, height), "%s blocks" % int(distances[name]), 'red', 25)
+        text(0, 'Distance Traveled:', 'black')
+        text(220, f"{int(distances[name])} blocks", 'red')
         height += vertical_space
 
-        drawText(draw, (10, height), "Blocks Interacted:", 'black', 25)
-        drawText(draw, (10 + 210, height), "%s blocks" % blocks[name], 'red', 25)
+        # drawText(draw, (10, height), "Blocks Interacted:", 'black', 25)
+        # drawText(draw, (10 + 210, height), "%s blocks" % blocks[name], 'red', 25)
+        text(0, 'Blocks Interacted:', 'black')
+        text(210, f"{blocks[name]} blocks", 'red')
         height += vertical_space
 
-        drawText(draw, (10, height), "Observations made:", 'black', 25)
-        drawText(draw, (10 + 235, height), "%s observations" %
-                observations[name], 'red', 25)
+        # drawText(draw, (10, height), "Observations made:", 'black', 25)
+        # drawText(draw, (10 + 235, height), "%s observations" %
+        #         observations[name], 'red', 25)
+        text(0, 'Observations Made:', 'black')
+        text(235, f"{observations[name]} observations", 'red')
+        height += vertical_space
+
+        text(0, 'Exploration Metric:', 'black')
+        text(220, str(exploration_metrics[name]), 'red')
+        text(280, 'Observation Metric:', 'black')
+        text(510, str(observation_metrics[name]), 'red')
 
         drawn_worlds.append(world)
 

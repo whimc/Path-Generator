@@ -5,10 +5,10 @@ import csv
 from pathgenerator.models.coordinate import Coordinate
 from pathgenerator.config import ALL_WORLDS, WORLDS
 from pathgenerator.utils.data_fetcher import DataFetcher
-from pathgenerator.utils.map_drawer import scale
+from pathgenerator.utils import scale
 
 
-def get_exploration_metrics(data):
+def get_metrics(data):
     map_matrices = {world.display_name:np.zeros((10, 10)) for world in ALL_WORLDS}
 
     for entry in data:
@@ -28,13 +28,13 @@ def get_exploration_metrics(data):
 
             map_matrices[world.display_name][row][col] = 1
 
-    return map_matrices
+    return {world:int(np.sum(metrics)) for world, metrics in map_matrices.items()}
 
 def write_metrics(output_file, user_metrics):
     csv_writer = csv.writer(output_file)
     csv_writer.writerow(['username'] + [world.display_name for world in ALL_WORLDS])
     for user, metrics in user_metrics.items():
-        csv_writer.writerow([user] + [np.sum(metrics[world.display_name]) for world in ALL_WORLDS])
+        csv_writer.writerow([user] + [metrics[world.display_name] for world in ALL_WORLDS])
 
 if __name__ == '__main__':
     parser = ArgumentParser(prog='pathgenerator.exploration_metric')
@@ -60,13 +60,13 @@ if __name__ == '__main__':
     exploration_metrics = dict()
     for username in usernames:
         data = user_data.get(username)
-        exploration_metrics[username] = get_exploration_metrics(data.position_data)
+        exploration_metrics[username] = get_metrics(data.position_data)
 
     # Generate the observation metrics
     observation_metrics = dict()
     for username in usernames:
         data = user_data.get(username)
-        observation_metrics[username] = get_exploration_metrics(data.observation_data)
+        observation_metrics[username] = get_metrics(data.observation_data)
 
     # Generate the CSV files for the metrics
     write_metrics(options.get('position_output'), exploration_metrics)
