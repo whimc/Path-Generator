@@ -1,12 +1,9 @@
 import os
 from pathgenerator.utils.data_fetcher import DataFetcher
-from PIL import Image
-from PIL.ImageDraw import ImageDraw
 from threading import Thread
 
 import pathgenerator.utils.map_drawer as map_drawer
 import pathgenerator.utils.imgur_uploader as imgur_uploader
-from pathgenerator.config import ALL_WORLDS, DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD
 
 OUTPUT_DIR = 'output'
 

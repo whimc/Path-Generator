@@ -1,6 +1,5 @@
 from argparse import ArgumentParser, FileType
 import numpy as np
-from PIL import Image
 import csv
 
 from pathgenerator.models.coordinate import Coordinate

@@ -85,9 +85,11 @@ for world_object in _config.get('worlds'):
     if not os.path.exists(world.image_path):
         print(f'{world.image_path} does not exist!')
         exit()
-
-    world.img_obj = Image.open(world.image_path)
-    world.draw_obj = ImageDraw.Draw(world.img_obj)
-
     WORLDS[world.world_name].append(world)
     ALL_WORLDS.append(world)
+
+def reload_world_images():
+    for world in ALL_WORLDS:
+        world.img_obj = Image.open(world.image_path)
+        world.draw_obj = ImageDraw.Draw(world.img_obj)
+reload_world_images()
