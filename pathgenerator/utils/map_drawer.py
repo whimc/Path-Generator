@@ -131,14 +131,15 @@ def draw_positions(pos_data):
         for world in WORLDS[coord.world_name]:
             coord.world = world
             prev_coord.world = world
+            dist = np.linalg.norm(np.array(coord.coord_3d_unscaled) - np.array(prev_coord.coord_3d_unscaled))
 
             # If we switched maps, finish the path by drawing a red dot at the stopping position
-            if different_world:
+            # We also want to finish the path if the player seemingly teleported (point dist. > 50)
+            if different_world or dist > 50:
                 # Finish off the previous image path
                 dot(prev_coord.world.draw_obj, prev_coord, 'red')
                 continue
 
-            dist = np.linalg.norm(np.array(coord.coord_3d) - np.array(prev_coord.coord_3d))
             counts[world.display_name] += dist
 
             map_draw = world.draw_obj
