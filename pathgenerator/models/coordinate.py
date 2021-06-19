@@ -32,6 +32,11 @@ class Coordinate:
         return (x, z)
 
     @property
+    def coord_2d_unscaled(self):
+        """Get a tuple of the unscaled 2d coordinates"""
+        return (self.x, self.z)
+
+    @property
     def coord_3d(self):
         """
         Scales the Coordinate to a scaled 3d coordinate
@@ -42,6 +47,11 @@ class Coordinate:
         """
         x, z = self.coord_2d
         return (x, self.y, z)
+
+    @property
+    def coord_3d_unscaled(self):
+        """Get a tuple of the unscaled 3d coordinates"""
+        return (self.x, self.y, self.z)
 
     @property
     def is_inside_view(self):
