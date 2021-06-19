@@ -187,7 +187,7 @@ def draw_observations(obs_data):
             dot(map_draw, coord, 'red')
 
             # The coordinate's "data" is the text of the observation
-            drawText(map_draw, coord.coord_2d, coord.data)
+            drawText(map_draw, coord.coord_2d, str(coord.data))
             counts[world.display_name] += 1
 
     return counts
