@@ -47,8 +47,8 @@
             "coreprotect_id": 0,
             "image_path": "maps/SpaceStation.png",
             "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -141,
-            "top_left_coordinate_z": -36
+            "top_left_coordinate_x": -155,
+            "top_left_coordinate_z": 10
         },
         {
             "display_name": "Earth Control",
