@@ -128,8 +128,8 @@
             "coreprotect_id": 0,
             "image_path": "maps/MynoaClose.png",
             "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": 1200,
-            "top_left_coordinate_z": 780
+            "top_left_coordinate_x": 1218,
+            "top_left_coordinate_z": 786
         },
         {
             "display_name": "Mynoa (Half)",
