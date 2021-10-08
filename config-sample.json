@@ -175,7 +175,42 @@
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -250,
             "top_left_coordinate_z": -216
+        },
+        {
+            "display_name": "Kepler",
+            "world_name": "Kepler",
+            "coreprotect_id": 0,
+            "image_path": "maps/Kepler.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -256,
+            "top_left_coordinate_z": -256
+        },
+        {
+            "display_name": "BrownDwarf",
+            "world_name": "BrownDwarf",
+            "coreprotect_id": 0,
+            "image_path": "maps/BrownDwarf.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -50,
+            "top_left_coordinate_z": -55
+        },
+        {
+            "display_name": "TwoMoons",
+            "world_name": "TwoMoons",
+            "coreprotect_id": 0,
+            "image_path": "maps/TwoMoons.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -82,
+            "top_left_coordinate_z": -15
+        },
+        {
+            "display_name": "TwoMoonsLow",
+            "world_name": "TwoMoonsLow",
+            "coreprotect_id": 0,
+            "image_path": "maps/TwoMoonsLow.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -114,
+            "top_left_coordinate_z": -32
         }
-
     ]
 }
