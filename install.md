@@ -70,3 +70,6 @@ ufw allow 'Nginx Full'
 
 ## Done
 The API should now be visible at `http://[public DNS]/path-generator`.
+
+## Keeping the API up-to-date
+Follow the [update guide](./update.md) to see details on applying new changes to the API.
