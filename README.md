@@ -78,6 +78,3 @@ $ python -m pathgenerator.api
 
 ### Running on Linux server
 Follow the [install guide](./install.md) to host the API on a Linux server.
-
-### Keeping `path-generator` Up to Date
-Follow the [update guide](./update.md) to see details on updating the API if it's being ran on a Linux server.
