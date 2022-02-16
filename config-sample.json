@@ -55,7 +55,7 @@
             "world_name": "EarthControl",
             "coreprotect_id": 0,
             "image_path": "maps/EarthControl.png",
-            "pixel_to_block_ratio": 2.0,
+            "pixel_to_block_ratio": 1.0,
             "top_left_coordinate_x": -251,
             "top_left_coordinate_z": -275
         },
@@ -100,16 +100,16 @@
             "world_name": "TiltedEarth_Frozen",
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthFrozen.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -302,
-            "top_left_coordinate_z": -179
+            "pixel_to_block_ratio": 1.0,
+            "top_left_coordinate_x": -330,
+            "top_left_coordinate_z": -200
         },
         {
             "display_name": "Tilted Earth (Jungle)",
             "world_name": "TiltedEarth_JungleIsland",
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthJungle.png",
-            "pixel_to_block_ratio": 4.0,
+            "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -301,
             "top_left_coordinate_z": -169
         },
@@ -118,7 +118,7 @@
             "world_name": "TiltedEarth_Melting",
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthMelting.png",
-            "pixel_to_block_ratio": 4.0,
+            "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -315,
             "top_left_coordinate_z": -244
         },
@@ -145,7 +145,7 @@
             "world_name": "Mynoa_far",
             "coreprotect_id": 0,
             "image_path": "maps/MynoaFar.png",
-            "pixel_to_block_ratio": 4.0,
+            "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -81,
             "top_left_coordinate_z": -624
         },
@@ -163,16 +163,16 @@
             "world_name": "Gliese",
             "coreprotect_id": 0,
             "image_path": "maps/Gliese.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -140,
-            "top_left_coordinate_z": -109
+            "pixel_to_block_ratio": 1.0,
+            "top_left_coordinate_x": -314,
+            "top_left_coordinate_z": -257
         },
         {
             "display_name": "Trappist",
             "world_name": "Trappist",
             "coreprotect_id": 0,
             "image_path": "maps/Trappist.png",
-            "pixel_to_block_ratio": 4.0,
+            "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -250,
             "top_left_coordinate_z": -216
         },
@@ -191,26 +191,80 @@
             "coreprotect_id": 0,
             "image_path": "maps/BrownDwarf.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -50,
-            "top_left_coordinate_z": -55
+            "top_left_coordinate_x": -301,
+            "top_left_coordinate_z": -283
         },
         {
             "display_name": "TwoMoons",
             "world_name": "TwoMoons",
             "coreprotect_id": 0,
             "image_path": "maps/TwoMoons.png",
-            "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -82,
-            "top_left_coordinate_z": -15
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -70,
+            "top_left_coordinate_z": -50
+        },
+        {
+            "display_name": "TwoMoonsLluna",
+            "world_name": "TwoMoonsLluna",
+            "coreprotect_id": 0,
+            "image_path": "maps/TwoMoonsLluna.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -100,
+            "top_left_coordinate_z": -80
         },
         {
             "display_name": "TwoMoonsLow",
             "world_name": "TwoMoonsLow",
             "coreprotect_id": 0,
             "image_path": "maps/TwoMoonsLow.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -70,
+            "top_left_coordinate_z": -50
+        },
+        {
+            "display_name": "BlackHole",
+            "world_name": "BlackHole",
+            "coreprotect_id": 0,
+            "image_path": "maps/BlackHole.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -120,
+            "top_left_coordinate_z": -120
+        },
+        {
+            "display_name": "ETLife",
+            "world_name": "ETLife",
+            "coreprotect_id": 0,
+            "image_path": "maps/ETLife.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -114,
-            "top_left_coordinate_z": -32
+            "top_left_coordinate_x": -49,
+            "top_left_coordinate_z": -49
+        },
+        {
+            "display_name": "Galaxy",
+            "world_name": "Galaxy",
+            "coreprotect_id": 0,
+            "image_path": "maps/Galaxy.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -270,
+            "top_left_coordinate_z": -300
+        },
+        {
+            "display_name": "NeutronStar",
+            "world_name": "NeutronStar",
+            "coreprotect_id": 0,
+            "image_path": "maps/NeutronStar.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -110,
+            "top_left_coordinate_z": -110
+        },
+        {
+            "display_name": "Quasar",
+            "world_name": "Quasar",
+            "coreprotect_id": 0,
+            "image_path": "maps/Quasar.png",
+            "pixel_to_block_ratio": 1.0,
+            "top_left_coordinate_x": -340,
+            "top_left_coordinate_z": -410
         }
     ]
 }
