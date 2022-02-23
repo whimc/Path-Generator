@@ -186,7 +186,7 @@
             "top_left_coordinate_z": -256
         },
         {
-            "display_name": "BrownDwarf",
+            "display_name": "Brown Dwarf",
             "world_name": "BrownDwarf",
             "coreprotect_id": 0,
             "image_path": "maps/BrownDwarf.png",
@@ -195,7 +195,7 @@
             "top_left_coordinate_z": -283
         },
         {
-            "display_name": "TwoMoons",
+            "display_name": "Two Moons",
             "world_name": "TwoMoons",
             "coreprotect_id": 0,
             "image_path": "maps/TwoMoons.png",
@@ -204,7 +204,7 @@
             "top_left_coordinate_z": -50
         },
         {
-            "display_name": "TwoMoonsLluna",
+            "display_name": "Two Moons (Lluna)",
             "world_name": "TwoMoonsLluna",
             "coreprotect_id": 0,
             "image_path": "maps/TwoMoonsLluna.png",
@@ -213,7 +213,7 @@
             "top_left_coordinate_z": -80
         },
         {
-            "display_name": "TwoMoonsLow",
+            "display_name": "Two Moons (Low)",
             "world_name": "TwoMoonsLow",
             "coreprotect_id": 0,
             "image_path": "maps/TwoMoonsLow.png",
@@ -222,7 +222,7 @@
             "top_left_coordinate_z": -50
         },
         {
-            "display_name": "BlackHole",
+            "display_name": "Black Hole",
             "world_name": "BlackHole",
             "coreprotect_id": 0,
             "image_path": "maps/BlackHole.png",
@@ -231,7 +231,7 @@
             "top_left_coordinate_z": -120
         },
         {
-            "display_name": "ETLife",
+            "display_name": "ET Life",
             "world_name": "ETLife",
             "coreprotect_id": 0,
             "image_path": "maps/ETLife.png",
@@ -249,7 +249,7 @@
             "top_left_coordinate_z": -300
         },
         {
-            "display_name": "NeutronStar",
+            "display_name": "Neutron Star",
             "world_name": "NeutronStar",
             "coreprotect_id": 0,
             "image_path": "maps/NeutronStar.png",
