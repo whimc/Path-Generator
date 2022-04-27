@@ -159,6 +159,15 @@
             "top_left_coordinate_z": -28
         },
         {
+            "display_name": "Cancri Cold",
+            "world_name": "Cancri_Cold",
+            "coreprotect_id": 0,
+            "image_path": "maps/CancriCold.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -100,
+            "top_left_coordinate_z": -100
+        },
+        {
             "display_name": "Gliese",
             "world_name": "Gliese",
             "coreprotect_id": 0,
