@@ -119,8 +119,8 @@
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthMelting.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -235,
-            "top_left_coordinate_z": -94
+            "top_left_coordinate_x": -395,
+            "top_left_coordinate_z": -394
         },
         {
             "display_name": "Mynoa (Close)",
