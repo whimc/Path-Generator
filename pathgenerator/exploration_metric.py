@@ -37,9 +37,13 @@ def write_metrics(output_file, user_metrics):
         csv_writer.writerow([user] + [metrics[world.display_name] for world in ALL_WORLDS])
 
 if __name__ == '__main__':
+    def csv_file(s):
+        file = FileType('w')(s)
+        return open(file.name, 'w', newline='')
+
     parser = ArgumentParser(prog='pathgenerator.exploration_metric')
-    parser.add_argument('position_output', type=FileType('w'), help='Output for exploration metrics')
-    parser.add_argument('observation_output', type=FileType('w'), help='Output for observation metrics')
+    parser.add_argument('position_output', type=csv_file, help='Output for exploration metrics')
+    parser.add_argument('observation_output', type=csv_file, help='Output for observation metrics')
     parser.add_argument('start_time', type=int, help='Unix start time')
     parser.add_argument('end_time', type=int, help='Unix end time')
     parser.add_argument('username', nargs='+', help='Username of the player')
