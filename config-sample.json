@@ -100,7 +100,7 @@
             "world_name": "TiltedEarth_Frozen",
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthFrozen.png",
-            "pixel_to_block_ratio": 1.0,
+            "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -330,
             "top_left_coordinate_z": -200
         },
@@ -109,7 +109,7 @@
             "world_name": "TiltedEarth_JungleIsland",
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthJungle.png",
-            "pixel_to_block_ratio": 2.0,
+            "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -301,
             "top_left_coordinate_z": -169
         },
@@ -119,8 +119,8 @@
             "coreprotect_id": 0,
             "image_path": "maps/TiltedEarthMelting.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -315,
-            "top_left_coordinate_z": -244
+            "top_left_coordinate_x": -395,
+            "top_left_coordinate_z": -394
         },
         {
             "display_name": "Mynoa (Close)",
@@ -157,6 +157,15 @@
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -21,
             "top_left_coordinate_z": -28
+        },
+        {
+            "display_name": "Cancri Cold",
+            "world_name": "Cancri_Cold",
+            "coreprotect_id": 0,
+            "image_path": "maps/CancriCold.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -100,
+            "top_left_coordinate_z": -100
         },
         {
             "display_name": "Gliese",

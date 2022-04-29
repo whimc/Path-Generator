@@ -1,6 +1,6 @@
 1. `ssh` into the AWS ec2 instance
 2. Activate super user with `sudo su`
-3. Navigate to the path-generator directory `cd /src/whimc/path-generator`
+3. Navigate to the path-generator directory `cd /srv/whimc/path-generator`
 4. Pull new files `git pull`
 5. Update `config.json` with the new entries that have been added from `config-sample.json`
     1. Since this is all through the terminal, you'll have to use a tool like `vim` or `emacs` to edit the file
