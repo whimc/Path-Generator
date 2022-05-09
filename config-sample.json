@@ -191,8 +191,8 @@
             "coreprotect_id": 0,
             "image_path": "maps/Kepler.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -256,
-            "top_left_coordinate_z": -256
+            "top_left_coordinate_x": -512,
+            "top_left_coordinate_z": -512
         },
         {
             "display_name": "Brown Dwarf",
