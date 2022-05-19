@@ -59,6 +59,11 @@ it is marked. The sum of marked tiles is taken and a CSV is created. To get thes
 ```
 $ python -m pathgenerator.exploration_metric <position output file> <observation output file> <start time> <end time> <username> [usernames ...]
 ```
+If you don't think in terms of 10 digit Unix time you can use [a converter like this](https://www.unixtimestamp.com/index.php) to create your time stamps. DO include file extensions (.csv) on the back of your file names. When exporting on the WHIMC AWS instance you will need to run the command as sudo for permission, from inside of the directory, which is path-generator. In this case you also need to use python3 instead of just python. An example command on the WHIMC AWS instance looks like:
+```
+$ cd path-generator
+$ sudo python3 -m pathgenerator.exploration_metric position.csv observation.csv 1649231449 1652255449 MCSoctopus MCSnarwhal MCSmouse MCSlion MCSiguana MCSarmadillo MCSbear MCScobra MCSdolphin MCSeagle MCSfox MCSgecko MCShorse MCSjackal MCSkangarooo
+```
 
 ### Options
 | Option                   | Description                                                  |
