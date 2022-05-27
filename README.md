@@ -38,7 +38,7 @@ These plugins must all be configured to write to the same **MySQL** database. Th
 #### Python dependencies
 _**Make sure you're running at least `Python 3.6`.**_
 
-To install all python library dependencies:
+To install all python library dependencies (run from command line, NOT python shell):
 ```
 $ python -m venv venv
 $ source venv/bin/activate
@@ -64,6 +64,11 @@ If you don't think in terms of 10 digit Unix time you can use [a converter like 
 $ cd path-generator
 $ sudo python3 -m pathgenerator.exploration_metric position.csv observation.csv 1649231449 1652255449 MCSoctopus MCSnarwhal MCSmouse MCSlion MCSiguana MCSarmadillo MCSbear MCScobra MCSdolphin MCSeagle MCSfox MCSgecko MCShorse MCSjackal MCSkangarooo
 ```
+Once you've generated your files you'll need to transport them off of the AWS instance to a computer for analysis. One way to do this is via [SSH and WinSCP](https://winscp.net/eng/docs/guide_amazon_ec2). Our current UIUC AWS instance is:
+```
+ec2-3-140-198-187.us-east-2.compute.amazonaws.com
+```
+Username ubuntu should work.
 
 ### Options
 | Option                   | Description                                                  |
