@@ -89,7 +89,7 @@ Follow the [update guide](./update.md) to see details on applying new changes to
 # EC2 Setup Guide
 
 ## Creating EC2 Instance
-1. Log into aws.illinois.edu and go to EC2
+1. Log into https://aws.illinois.edu and go to EC2
 2. Click to create a new EC2 instance
 3. Select the Ubuntu 64-bit (x86) AMI
 4. Select whichever type you'd like. I used the `t2.micro` type.
