@@ -46,7 +46,7 @@ $ pip install -r requirements.txt
 ```
 
 # Installation and Map Updates
-Can be found in setup_update.md
+Can be found in [setup_update.md](https://github.com/whimc/Path-Generator/setup_update.md)
 
 # Running Path Generator
 
