@@ -1,3 +1,4 @@
+`Contents`
 - [Installation](#Installation)
 - [Updating and Adding New Maps](#Updating-and-Adding-New-Maps)
 
