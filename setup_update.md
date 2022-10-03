@@ -1,13 +1,5 @@
-# Updating and Adding New Maps
-1. ssh into the AWS ec2 instance
-2. Activate super user with ```sudo su```
-3. Navigate to the path-generator directory ```cd /srv/whimc/path-generator```
-4. Pull new files ```git pull```
-5. Update config.json with the new entries that have been added from config-sample.json
-  - Since this is all through the terminal, you'll have to use a tool like vim or emacs to edit the file
-  - Make sure to update the coreprotect_id field for each new map that was added
-  - After updating the file, if you run diff config.json config-sample.json, you should just see differences for coreprotect_id and database/Imgur credentials
-6. Run ```systemctl restart path-generator``` to restart the API
+[1. Installation](#Installation)
+[2. Updating and Adding New Maps](#Updating-and-Adding-New-Maps)
 
 # Installation
 **[this guide](https://faun.pub/deploy-flask-app-with-nginx-using-gunicorn-7fda4f50066a) was followed to set up the server.**
@@ -143,3 +135,13 @@ Follow the [update guide](./update.md) to see details on applying new changes to
 	* Give the key a name and paste in your clipboard
 	* Once the key is added, click the "Enable SSO" and select the WHIMC organization. You will be prompted to log in with SSO
 
+# Updating and Adding New Maps
+1. ssh into the AWS ec2 instance
+2. Activate super user with ```sudo su```
+3. Navigate to the path-generator directory ```cd /srv/whimc/path-generator```
+4. Pull new files ```git pull```
+5. Update config.json with the new entries that have been added from config-sample.json
+  - Since this is all through the terminal, you'll have to use a tool like vim or emacs to edit the file
+  - Make sure to update the coreprotect_id field for each new map that was added
+  - After updating the file, if you run diff config.json config-sample.json, you should just see differences for coreprotect_id and database/Imgur credentials
+6. Run ```systemctl restart path-generator``` to restart the API
