@@ -54,7 +54,7 @@ $ pip install -r requirements.txt
   - Since this is all through the terminal, you'll have to use a tool like vim or emacs to edit the file
   - Make sure to update the coreprotect_id field for each new map that was added
   - After updating the file, if you run diff config.json config-sample.json, you should just see differences for coreprotect_id and database/Imgur credentials
-6. Run systemctl restart path-generator to restart the API
+6. Run ```systemctl restart path-generator``` to restart the API
 
 # Running Path Generator
 
