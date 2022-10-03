@@ -1,5 +1,5 @@
-[1. Installation](#Installation)
-[2. Updating and Adding New Maps](#Updating-and-Adding-New-Maps)
+- [Installation](#Installation)
+- [Updating and Adding New Maps](#Updating-and-Adding-New-Maps)
 
 # Installation
 **[this guide](https://faun.pub/deploy-flask-app-with-nginx-using-gunicorn-7fda4f50066a) was followed to set up the server.**
@@ -72,11 +72,7 @@ systemctl restart nginx
 ufw allow 'Nginx Full'
 ```
 
-## Done
-The API should now be visible at `http://[public DNS]/path-generator`.
-
-## Keeping the API up-to-date
-Follow the [update guide](./update.md) to see details on applying new changes to the API.
+`You are now done.` The API should now be visible at `http://[public DNS]/path-generator`.
 
 # EC2 Setup Guide
 
