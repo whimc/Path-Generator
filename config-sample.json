@@ -137,8 +137,8 @@
             "coreprotect_id": 0,
             "image_path": "maps/MynoaHalf.png",
             "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -2480,
-            "top_left_coordinate_z": 495
+            "top_left_coordinate_x": -128,
+            "top_left_coordinate_z": 44
         },
         {
             "display_name": "Mynoa (Far)",
