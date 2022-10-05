@@ -45,6 +45,9 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
+# Installation and Map Updates
+Can be found in [setup_update.md](./setup_update.md)
+
 # Running Path Generator
 
 ## Local Generator
@@ -85,6 +88,3 @@ To run the Flask App on your local computer:
 ```
 $ python -m pathgenerator.api
 ```
-
-### Running on Linux server
-Follow the [install guide](./install.md) to host the API on a Linux server.
