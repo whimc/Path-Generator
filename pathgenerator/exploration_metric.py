@@ -30,7 +30,77 @@ def get_metrics(data):
 
     return {world:int(np.sum(metrics)) for world, metrics in map_matrices.items()}
 
+def get_investigation_metrics(data):
+    """
+    Calculates the investigation (points of interest) metric.
+    
+    Arguments:
+        data {} -- Position data from the database
+    """
+
+    # TODO: handle entering a PoI more than once (do not award points more than once)
+    
+    # TODO: points of interest config -- put in config.py
+    ''' 
+    config format idea, might be a better way to implement:
+    "worlds": [
+	    {
+            "display_name": "Rocket Launch",
+            "world_name": "RocketLaunch",
+            "coreprotect_id": 0,
+            "image_path": "maps/RocketLaunch.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -1731,
+            "top_left_coordinate_z": 2638
+            
+            "intrest_points": [
+                {
+                    "x": 100,
+                    "y": 70,
+                    "z": 100,
+                    "height": 5,
+                    "radius": 5,
+                    "value": 1
+                },
+                ...
+            ]
+        }, 
+        ...
+    ]
+    '''
+    
+    # go though all position entries
+    # would be better to only loop through data and worlds once
+    for entry in data:
+        player_coord = Coordinate(*entry)
+
+        for world in WORLDS[player_coord.world_name]:
+            # skip if outside of current world's view
+            player_coord.world = world
+            if not player_coord.is_inside_view:
+                continue
+
+            # TODO: go through points of interest for current world
+
+            # TODO: check within y range, continue if not
+                # NOTE: y range = (y coord from config, y coord from config + height)
+            
+            # TODO: check within x circle, continue if not
+
+            # TODO: check within z circle, continue if not
+
+    # TODO: add up metric
+    return {world.display_name:int(1) for world in ALL_WORLDS}
+
 def write_metrics(output_file, user_metrics):
+    """
+    Creates a .csv file for the given metric.
+
+    Arguments:
+        output_file {str} -- Outfupt file name
+        user_metrics {dict} -- Metrics to store in the .csv file
+    """
+
     csv_writer = csv.writer(output_file)
     csv_writer.writerow(['username'] + [world.display_name for world in ALL_WORLDS])
     for user, metrics in user_metrics.items():
@@ -44,6 +114,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(prog='pathgenerator.exploration_metric')
     parser.add_argument('position_output', type=csv_file, help='Output for exploration metrics')
     parser.add_argument('observation_output', type=csv_file, help='Output for observation metrics')
+    # TODO: add option for investigation metric
     parser.add_argument('start_time', type=int, help='Unix start time')
     parser.add_argument('end_time', type=int, help='Unix end time')
     parser.add_argument('username', nargs='+', help='Username of the player')
@@ -60,6 +131,8 @@ if __name__ == '__main__':
         print(f"Fetching data for {username}")
         user_data[username] = DataFetcher(username, start_time, end_time)
 
+    # TODO: merge below into 1 loop through users ? (low priority)
+
     # Generate the exploration metrics
     exploration_metrics = dict()
     for username in usernames:
@@ -71,6 +144,12 @@ if __name__ == '__main__':
     for username in usernames:
         data = user_data.get(username)
         observation_metrics[username] = get_metrics(data.observation_data)
+
+    # TODO: generate the investigation metrics
+    investigation_metrics = dict()
+    for username in usernames:
+        data = user_data.get(username)
+        investigation_metrics[username] = get_investigation_metrics(data.position_data)
 
     # Generate the CSV files for the metrics
     write_metrics(options.get('position_output'), exploration_metrics)

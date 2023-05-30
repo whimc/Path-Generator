@@ -6,7 +6,7 @@ from collections import Counter
 import os
 
 from pathgenerator.models.coordinate import Coordinate
-from pathgenerator.exploration_metric import get_metrics
+from pathgenerator.exploration_metric import get_metrics, get_investigation_metrics
 from pathgenerator.config import ALL_WORLDS, WORLDS, reload_world_images
 from pathgenerator.utils import scale, resized_copy
 
@@ -254,6 +254,8 @@ def draw_path_image(username, start_time, end_time,
 
     exploration_metrics = get_metrics(pos_data)
     observation_metrics = get_metrics(obs_data)
+    # TODO: add investigation metrics
+    investigation_metrics = get_investigation_metrics(pos_data)
 
     # Duration in minutes
     duration = round((end_time - start_time) / 60, 2)
@@ -314,6 +316,11 @@ def draw_path_image(username, start_time, end_time,
         text(220, str(exploration_metrics[name]), 'red')
         text(280, 'Observation Metric:', 'black')
         text(510, str(observation_metrics[name]), 'red')
+
+        # investigation (points of interest) metric
+        # TODO: edit the spacing to make it look better
+        text(550, 'Investigation Metric:', 'black')
+        text(790, str(investigation_metrics[name]), 'red')
 
         drawn_worlds.append(world)
 
