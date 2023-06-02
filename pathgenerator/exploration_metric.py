@@ -1,4 +1,6 @@
 from argparse import ArgumentParser, FileType
+from math import sqrt
+
 import numpy as np
 import csv
 
@@ -7,6 +9,15 @@ from pathgenerator.config import ALL_WORLDS, WORLDS
 from pathgenerator.utils.data_fetcher import DataFetcher
 from pathgenerator.utils import scale
 
+
+def distance_2d(p1, p2):
+    """Distance between two 2d points
+
+    Args:
+        p1 (tuple[float, float]): point 1
+        p2 (tuple[float, float]): point 2
+    """
+    return sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)
 
 def get_metrics(data):
     map_matrices = {world.display_name:np.zeros((10, 10)) for world in ALL_WORLDS}
@@ -33,64 +44,36 @@ def get_metrics(data):
 def get_investigation_metrics(data):
     """
     Calculates the investigation (points of interest) metric.
-    
+
     Arguments:
         data {} -- Position data from the database
     """
 
     # TODO: handle entering a PoI more than once (do not award points more than once)
-    
-    # TODO: points of interest config -- put in config.py
-    ''' 
-    config format idea, might be a better way to implement:
-    "worlds": [
-	    {
-            "display_name": "Rocket Launch",
-            "world_name": "RocketLaunch",
-            "coreprotect_id": 0,
-            "image_path": "maps/RocketLaunch.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -1731,
-            "top_left_coordinate_z": 2638
-            
-            "intrest_points": [
-                {
-                    "x": 100,
-                    "y": 70,
-                    "z": 100,
-                    "height": 5,
-                    "radius": 5,
-                    "value": 1
-                },
-                ...
-            ]
-        }, 
-        ...
-    ]
-    '''
-    
+    investigations = {world.display_name: 0 for world in ALL_WORLDS}
+
+    visited_points_of_interest = set()
+
     # go though all position entries
     # would be better to only loop through data and worlds once
     for entry in data:
-        player_coord = Coordinate(*entry)
+        coord = Coordinate(*entry)
 
-        for world in WORLDS[player_coord.world_name]:
+        for world in WORLDS[coord.world_name]:
             # skip if outside of current world's view
-            player_coord.world = world
-            if not player_coord.is_inside_view:
+            coord.world = world
+            if not coord.is_inside_view:
                 continue
 
-            # TODO: go through points of interest for current world
+            for poi in world.points_of_interest:
+                if poi in visited_points_of_interest:
+                    continue
+                dist = distance_2d(coord.coord_2d_unscaled, (poi.x, poi.z))
+                if dist < poi.radius and abs(coord.y - poi.y) < poi.height:
+                    visited_points_of_interest.add(poi)
+                    investigations[world.display_name] += poi.value
 
-            # TODO: check within y range, continue if not
-                # NOTE: y range = (y coord from config, y coord from config + height)
-            
-            # TODO: check within x circle, continue if not
-
-            # TODO: check within z circle, continue if not
-
-    # TODO: add up metric
-    return {world.display_name:int(1) for world in ALL_WORLDS}
+    return investigations
 
 def write_metrics(output_file, user_metrics):
     """
@@ -114,7 +97,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(prog='pathgenerator.exploration_metric')
     parser.add_argument('position_output', type=csv_file, help='Output for exploration metrics')
     parser.add_argument('observation_output', type=csv_file, help='Output for observation metrics')
-    # TODO: add option for investigation metric
+    parser.add_argument('investigation_output', type=csv_file, help='Output for investigation metrics')
     parser.add_argument('start_time', type=int, help='Unix start time')
     parser.add_argument('end_time', type=int, help='Unix end time')
     parser.add_argument('username', nargs='+', help='Username of the player')
@@ -154,3 +137,4 @@ if __name__ == '__main__':
     # Generate the CSV files for the metrics
     write_metrics(options.get('position_output'), exploration_metrics)
     write_metrics(options.get('observation_output'), observation_metrics)
+    write_metrics(options.get('investigation_output'), investigation_metrics)

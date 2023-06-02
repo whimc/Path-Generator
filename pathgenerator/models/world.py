@@ -1,5 +1,9 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import List
+
 from PIL import Image, ImageDraw
+
+from pathgenerator.models.point_of_interest import PointOfInterest
 
 @dataclass
 class World:
@@ -12,3 +16,4 @@ class World:
     top_left_coordinate_z: int = -512
     draw_obj: ImageDraw.Draw = None
     img_obj: Image = None
+    points_of_interest: List[PointOfInterest] = field(default_factory=list)
