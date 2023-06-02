@@ -30,7 +30,27 @@
             "image_path": "maps/RocketLaunch.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -1731,
-            "top_left_coordinate_z": 2638
+            "top_left_coordinate_z": 2638,
+            "areas_of_interest": [
+                {
+                    "label": "Materials Scientist",
+                    "x": -1570.5,
+                    "y": 67,
+                    "z": 2738.5,
+                    "height": 2,
+                    "radius": 3,
+                    "score": 1
+                },
+                {
+                    "label": "Mission Control",
+                    "x": -1572,
+                    "y": 79,
+                    "z": 2746,
+                    "height": 10,
+                    "radius": 10,
+                    "score": 1
+                }
+            ]
         },
         {
             "display_name": "Lunar Crater",

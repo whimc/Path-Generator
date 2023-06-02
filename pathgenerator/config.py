@@ -5,7 +5,7 @@ from collections import defaultdict
 from PIL import Image, ImageDraw
 
 from pathgenerator.models.world import World
-from pathgenerator.models.point_of_interest import PointOfInterest
+from pathgenerator.models.area_of_interest import AreaOfInterest
 
 
 PATH = 'config.json'
@@ -82,9 +82,9 @@ IMGUR_ALBUM_ID = _get('album_id')
 WORLDS: DefaultDict[str, List[World]] = defaultdict(lambda: [])
 ALL_WORLDS: List[World] = []
 for world_object in _config.get('worlds'):
-    poi_objs = world_object.pop('points_of_interest', [])
-    pois = [PointOfInterest(**obj) for obj in poi_objs]
-    world = World(**world_object, points_of_interest=pois)
+    aoi_objs = world_object.pop('areas_of_interest', [])
+    aois = [AreaOfInterest(**obj) for obj in aoi_objs]
+    world = World(**world_object, areas_of_interest=aois)
 
     if not os.path.exists(world.image_path):
         print(f'{world.image_path} does not exist! Ignoring...')

@@ -43,16 +43,14 @@ def get_metrics(data):
 
 def get_investigation_metrics(data):
     """
-    Calculates the investigation (points of interest) metric.
+    Calculates the investigation (areas of interest) metric.
 
     Arguments:
         data {} -- Position data from the database
     """
 
-    # TODO: handle entering a PoI more than once (do not award points more than once)
     investigations = {world.display_name: 0 for world in ALL_WORLDS}
-
-    visited_points_of_interest = set()
+    visited_areas = set()
 
     # go though all position entries
     # would be better to only loop through data and worlds once
@@ -65,13 +63,13 @@ def get_investigation_metrics(data):
             if not coord.is_inside_view:
                 continue
 
-            for poi in world.points_of_interest:
-                if poi in visited_points_of_interest:
+            for aoi in world.areas_of_interest:
+                if aoi in visited_areas:
                     continue
-                dist = distance_2d(coord.coord_2d_unscaled, (poi.x, poi.z))
-                if dist < poi.radius and abs(coord.y - poi.y) < poi.height:
-                    visited_points_of_interest.add(poi)
-                    investigations[world.display_name] += poi.value
+                dist = distance_2d(coord.coord_2d_unscaled, (aoi.x, aoi.z))
+                if dist < aoi.radius and abs(coord.y - aoi.y) < aoi.height:
+                    visited_areas.add(aoi)
+                    investigations[world.display_name] += aoi.score
 
     return investigations
 

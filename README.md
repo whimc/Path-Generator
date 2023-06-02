@@ -25,6 +25,20 @@ If you are using downloads of our worlds, the only part of the `worlds` section 
 | `pixel_to_block_ratio` | No | Float | `1.0` | Ratio of pixels to blocks within the image |
 | `top_left_coordinate_x` | No | Integer | `-512` | The X coordinate (in Minecraft) of the top left pixel |
 | `top_left_coordinate_z` | No | Integer | `-512` | The Z coordinate (in Minecraft) of the top left pixel |
+| `areas_of_interest` | No | List[`AreaOfInterest`] | `n/a` | A list of areas of interest |
+
+#### Area of Interest Attributes
+All keys are required. An area of interest is a represented as a cone-shaped space in the world.
+
+| Key | Type | Description |
+|-|-|-|
+| `label` | String | A name for the area |
+| `x` | Float | X position of center coordiante |
+| `y` | Float | Y position of center coordinate |
+| `z` | Float | Z position of center coordinate |
+| `height` | Float | The  |
+| `radius` | Float | The X/Z radius required to be within  |
+| `score` | Float | The numeric value associated with visiting the area |
 
 ### Dependencies
 
@@ -56,16 +70,22 @@ To locally run the generator:
 $ python -m pathgenerator [-h] [-n] [-o] [-e] <username> <start_time> <end_time>
 ```
 
-## Exploration Metrics
+## Exploration/Investigation Metrics
 Exploration metrics 'draw' a 10x10 grid on maps. If a user explores one of those tiles or makes an observation on them,
-it is marked. The sum of marked tiles is taken and a CSV is created. To get these metrics, run the following:
+it is marked. The sum of marked tiles is taken and a CSV is created.
+
+Investigation metrics aim to gauge how many areas of interest a player visited in each map.
+Each area has a "score" associated with it. The sum of all visited areas' scores is reported.
+An area's score is only counted once.
+
+To get these metrics, run the following:
 ```
-$ python -m pathgenerator.exploration_metric <position output file> <observation output file> <start time> <end time> <username> [usernames ...]
+$ python -m pathgenerator.exploration_metric <position output file> <observation output file> <investigation output file> <start time> <end time> <username> [usernames ...]
 ```
 If you don't think in terms of 10 digit Unix time you can use [a converter like this](https://www.unixtimestamp.com/index.php) to create your time stamps. DO include file extensions (.csv) on the back of your file names. When exporting on the WHIMC AWS instance you will need to run the command as sudo for permission, from inside of the directory, which is path-generator. In this case you also need to use python3 instead of just python. An example command on the WHIMC AWS instance looks like:
 ```
 $ cd path-generator
-$ sudo python3 -m pathgenerator.exploration_metric position.csv observation.csv 1649231449 1652255449 MCSoctopus MCSnarwhal MCSmouse MCSlion MCSiguana MCSarmadillo MCSbear MCScobra MCSdolphin MCSeagle MCSfox MCSgecko MCShorse MCSjackal MCSkangarooo
+$ sudo python3 -m pathgenerator.exploration_metric position.csv observation.csv investigation.csv 1649231449 1652255449 MCSoctopus MCSnarwhal MCSmouse MCSlion MCSiguana MCSarmadillo MCSbear MCScobra MCSdolphin MCSeagle MCSfox MCSgecko MCShorse MCSjackal MCSkangarooo
 ```
 Once you've generated your files you'll need to transport them off of the AWS instance to a computer for analysis. One way to do this is via [SSH and WinSCP](https://winscp.net/eng/docs/guide_amazon_ec2). Our current UIUC AWS instance is:
 ```
