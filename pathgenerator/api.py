@@ -12,10 +12,10 @@ CORS(app)
 api = Api(app, prefix='/path-generator')
 
 parser = reqparse.RequestParser()
-parser.add_argument('username', type=str, required=True, help='You must specify a username')
-parser.add_argument('start_time', type=int, required=True, help='You must specify a start time as a unix timestamp')
-parser.add_argument('end_time', type=int, required=True, help='You must specify an end time as a unix timestamp')
-parser.add_argument('gen_empty', type=bool, required=False, default=False)
+parser.add_argument('username', type=str, required=True, help='You must specify a username', location='args')
+parser.add_argument('start_time', type=int, required=True, help='You must specify a start time as a unix timestamp', location='args')
+parser.add_argument('end_time', type=int, required=True, help='You must specify an end time as a unix timestamp', location='args')
+parser.add_argument('gen_empty', type=bool, required=False, default=False, location='args')
 
 def get_message(success, message):
     return json.dumps({'success': success, 'message': message})
