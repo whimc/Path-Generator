@@ -25,7 +25,7 @@ git clone git@github.com:whimc/Path-Generator.git --config core.sshCommand="ssh 
 ```
 
 ## Python requirements
-Recent versions of Ubuntu come with Python 3 pre-installed. **Make sure the version is > 3.6**. Install/update Python if this is not the case.
+Recent versions of Ubuntu come with Python 3 pre-installed. **Make sure the version is >= 3.10**. Install/update Python if this is not the case.
 After fulfilling the python version requirement, we can enter the directory and install our requirements.
 ```bash
 cd path-generator

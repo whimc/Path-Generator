@@ -36,7 +36,7 @@ If you are using downloads of our worlds, the only part of the `worlds` section 
 These plugins must all be configured to write to the same **MySQL** database. This service will not work otherwise.
 
 #### Python dependencies
-_**Make sure you're running at least `Python 3.6`.**_
+_**Make sure you're running at least `Python 3.10`.**_
 
 To install all python library dependencies (run from command line, NOT python shell):
 ```
