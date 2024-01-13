@@ -1,8 +1,9 @@
 numpy==1.26.3
-Pillow==8.1.2
+Pillow==8.3.2
 mysql-connector-python==8.2.0
 pyimgur==0.6.0
 Flask==3.0.0
 Flask-Cors==4.0.0
 Flask-RESTful==0.3.10
 markdown2==2.4.12
+gunicorn==21.2.0
