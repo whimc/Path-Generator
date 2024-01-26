@@ -8,4 +8,4 @@ def resized_copy(image: Image.Image, width) -> Image.Image:
     """Resize a Pillow Image to the given width while maintaining the aspect ratio"""
     wpercent = width / image.size[0]
     hsize = int(image.size[1] * wpercent)
-    return image.resize((width, hsize), Image.ANTIALIAS)
+    return image.resize((width, hsize), Image.Resampling.LANCZOS)
