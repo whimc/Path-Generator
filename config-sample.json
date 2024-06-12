@@ -251,29 +251,29 @@
         {
             "display_name": "Mars",
             "world_name": "Mars",
-            "coreprotect_id": 0,
+            "coreprotect_id": 22,
             "image_path": "maps/Mars.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -512,
-            "top_left_coordinate_z": -1024
+            "top_left_coordinate_x": -1024,
+            "top_left_coordinate_z": -512
         },
         {
-            "display_name": "umaineqrf",
-            "world_name": "umaineqrf",
-            "coreprotect_id": 0,
-            "image_path": "maps/Mars.png",
-            "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -512,
-            "top_left_coordinate_z": -1024
-        },
-        {
-            "display_name": "sdp7",
+            "display_name": "Mars sdp7",
             "world_name": "sdp7",
-            "coreprotect_id": 0,
+            "coreprotect_id": 111,
             "image_path": "maps/Mars.png",
             "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -512,
-            "top_left_coordinate_z": -1024
+            "top_left_coordinate_x": -1024,
+            "top_left_coordinate_z": -512
+        },
+        {
+            "display_name": "Mars umaineqrf",
+            "world_name": "umaineqrf",
+            "coreprotect_id": 109,
+            "image_path": "maps/Mars.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -1024,
+            "top_left_coordinate_z": -512
         }
     ]
 }
