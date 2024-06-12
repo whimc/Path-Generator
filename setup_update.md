@@ -133,6 +133,8 @@ ufw allow 'Nginx Full'
 	* Once the key is added, click the "Enable SSO" and select the WHIMC organization. You will be prompted to log in with SSO
 
 # Updating and Adding New Maps
+Create maps and get coordinate data ahead of time with the Unmined application, found under Development > MC Tools and Assets > Tools
+
 1. ssh into the AWS ec2 instance
 2. Activate super user with ```sudo su```
 3. Navigate to the path-generator directory ```cd /srv/whimc/path-generator```
