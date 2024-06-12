@@ -247,6 +247,33 @@
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -49,
             "top_left_coordinate_z": -49
+        },
+        {
+            "display_name": "Mars",
+            "world_name": "Mars",
+            "coreprotect_id": 0,
+            "image_path": "maps/Mars.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -512,
+            "top_left_coordinate_z": -1024
+        },
+        {
+            "display_name": "umaineqrf",
+            "world_name": "umaineqrf",
+            "coreprotect_id": 0,
+            "image_path": "maps/Mars.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -512,
+            "top_left_coordinate_z": -1024
+        },
+        {
+            "display_name": "sdp7",
+            "world_name": "sdp7",
+            "coreprotect_id": 0,
+            "image_path": "maps/Mars.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -512,
+            "top_left_coordinate_z": -1024
         }
     ]
 }
