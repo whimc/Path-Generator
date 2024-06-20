@@ -146,8 +146,8 @@
             "coreprotect_id": 75,
             "image_path": "maps/TiltedEarthMelting-4px-to-1block.png",
             "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -730,
-            "top_left_coordinate_z": -880
+            "top_left_coordinate_x": -395,
+            "top_left_coordinate_z": -394
         },
         {
             "display_name": "Tilted Earth (Frozen)",
@@ -155,8 +155,8 @@
             "coreprotect_id": 8,
             "image_path": "maps/TiltedEarthFrozen-3.3px-to-1block.png",
             "pixel_to_block_ratio": 3.3,
-            "top_left_coordinate_x": -730,
-            "top_left_coordinate_z": -880
+            "top_left_coordinate_x": -330,
+            "top_left_coordinate_z": -200
         },
         {
             "display_name": "Tilted Earth (Warm)",
@@ -164,8 +164,8 @@
             "coreprotect_id": 5,
             "image_path": "maps/TiltedEarthJungle-3.3px-to-1block.png",
             "pixel_to_block_ratio": 3.3,
-            "top_left_coordinate_x": -730,
-            "top_left_coordinate_z": -880
+            "top_left_coordinate_x": -301,
+            "top_left_coordinate_z": -169
         },
         {
             "display_name": "Tilted Earth (Melting)",
