@@ -22,7 +22,7 @@
         "album_id": ""
     },
 
-        "worlds": [
+    "worlds": [
         {
             "display_name": "Rocket Launch",
             "world_name": "RocketLaunch",
@@ -144,11 +144,38 @@
             "display_name": "Tilted Earth (Melting)",
             "world_name": "TiltedMelting",
             "coreprotect_id": 75,
+            "image_path": "maps/TiltedEarthMelting-4px-to-1block.png",
+            "pixel_to_block_ratio": 4.0,
+            "top_left_coordinate_x": -730,
+            "top_left_coordinate_z": -880
+        },
+        {
+            "display_name": "Tilted Earth (Frozen)",
+            "world_name": "TiltedFrozen",
+            "coreprotect_id": 8,
+            "image_path": "maps/TiltedEarthFrozen-3.3px-to-1block.png",
+            "pixel_to_block_ratio": 3.3,
+            "top_left_coordinate_x": -730,
+            "top_left_coordinate_z": -880
+        },
+        {
+            "display_name": "Tilted Earth (Warm)",
+            "world_name": "TiltedWarm",
+            "coreprotect_id": 5,
+            "image_path": "maps/TiltedEarthJungle-3.3px-to-1block.png",
+            "pixel_to_block_ratio": 3.3,
+            "top_left_coordinate_x": -730,
+            "top_left_coordinate_z": -880
+        },
+        {
+            "display_name": "Tilted Earth (Melting)",
+            "world_name": "TiltedMelting",
+            "coreprotect_id": 2,
             "image_path": "maps/TiltedMelting.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -730,
             "top_left_coordinate_z": -880
-        },
+        },        
         {
             "display_name": "Mynoa (Close)",
             "world_name": "MynoaClose",
