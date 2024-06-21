@@ -133,7 +133,7 @@ ufw allow 'Nginx Full'
 	* Once the key is added, click the "Enable SSO" and select the WHIMC organization. You will be prompted to log in with SSO
 
 # Updating and Adding New Maps
-0. Use the Unmined map image export tool found under `\Box\WHIMC\development\MC Tools and Assets\Tools\Unmined Map Tool` to create a PNG with specific coordinates to add to the maps directory.
+0. Use the Unmined map image export tool found under `\Box\WHIMC\development\MC Tools and Assets\Tools\Unmined Map Tool` to create a PNG with specific coordinates to add to the maps directory. Make sure to fetch upper left corner coords and map ID/name from Core Protect and add it to the config.
 1. ssh into the AWS ec2 instance
 2. Activate super user with ```sudo su```
 3. Navigate to the path-generator directory ```cd /srv/whimc/path-generator```

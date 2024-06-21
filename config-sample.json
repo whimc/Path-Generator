@@ -26,7 +26,7 @@
         {
             "display_name": "Rocket Launch",
             "world_name": "RocketLaunch",
-            "coreprotect_id": 0,
+            "coreprotect_id": 15,
             "image_path": "maps/RocketLaunch.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -1731,
@@ -35,7 +35,7 @@
         {
             "display_name": "Lunar Crater",
             "world_name": "LunarCrater",
-            "coreprotect_id": 0,
+            "coreprotect_id": 11,
             "image_path": "maps/LunarCrater.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -222,
@@ -44,7 +44,7 @@
         {
             "display_name": "Space Station",
             "world_name": "Hub",
-            "coreprotect_id": 0,
+            "coreprotect_id": 1,
             "image_path": "maps/SpaceStation.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -155,
@@ -53,7 +53,7 @@
         {
             "display_name": "Earth Control",
             "world_name": "EarthControl",
-            "coreprotect_id": 0,
+            "coreprotect_id": 10,
             "image_path": "maps/EarthControl.png",
             "pixel_to_block_ratio": 1.0,
             "top_left_coordinate_x": -251,
@@ -62,7 +62,7 @@
         {
             "display_name": "No Moon",
             "world_name": "NoMoon",
-            "coreprotect_id": 0,
+            "coreprotect_id": 9,
             "image_path": "maps/NoMoon.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -325,
@@ -71,7 +71,7 @@
         {
             "display_name": "Colder Sun (Habitable Strip)",
             "world_name": "ColderStrip",
-            "coreprotect_id": 0,
+            "coreprotect_id": 68,
             "image_path": "maps/ColderStrip.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -227,
@@ -80,7 +80,7 @@
         {
             "display_name": "Colder Sun (Cold)",
             "world_name": "ColderCold",
-            "coreprotect_id": 0,
+            "coreprotect_id": 72,
             "image_path": "maps/ColderCold.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -219,
@@ -89,7 +89,7 @@
         {
             "display_name": "Colder Sun (Hot)",
             "world_name": "ColderHot",
-            "coreprotect_id": 0,
+            "coreprotect_id": 65,
             "image_path": "maps/ColderHot.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -302,
@@ -98,7 +98,7 @@
         {
             "display_name": "Tilted Earth (Frozen)",
             "world_name": "TiltedFrozen",
-            "coreprotect_id": 0,
+            "coreprotect_id": 76,
             "image_path": "maps/TiltedFrozen.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -730,
@@ -107,7 +107,7 @@
         {
             "display_name": "Tilted Earth (Warm)",
             "world_name": "TiltedWarm",
-            "coreprotect_id": 0,
+            "coreprotect_id": 71,
             "image_path": "maps/TiltedWarm.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -730,
@@ -116,7 +116,7 @@
         {
             "display_name": "Tilted Earth (Melting)",
             "world_name": "TiltedMelting",
-            "coreprotect_id": 0,
+            "coreprotect_id": 2,
             "image_path": "maps/TiltedMelting.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -730,
@@ -125,7 +125,7 @@
         {
             "display_name": "Mynoa (Close)",
             "world_name": "MynoaClose",
-            "coreprotect_id": 0,
+            "coreprotect_id": 67,
             "image_path": "maps/MynoaClose.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": 1218,
@@ -134,7 +134,7 @@
         {
             "display_name": "Mynoa (Half)",
             "world_name": "MynoaHalf",
-            "coreprotect_id": 0,
+            "coreprotect_id": 70,
             "image_path": "maps/MynoaHalf.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -128,
@@ -143,7 +143,7 @@
         {
             "display_name": "Mynoa (Far)",
             "world_name": "MynoaFar",
-            "coreprotect_id": 0,
+            "coreprotect_id": 66,
             "image_path": "maps/MynoaFar.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -81,
@@ -152,7 +152,7 @@
         {
             "display_name": "Cancri",
             "world_name": "Cancri",
-            "coreprotect_id": 0,
+            "coreprotect_id": 18,
             "image_path": "maps/Cancri.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -21,
@@ -161,7 +161,7 @@
         {
             "display_name": "Cancri Cold",
             "world_name": "CancriCold",
-            "coreprotect_id": 0,
+            "coreprotect_id": 69,
             "image_path": "maps/CancriCold.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -100,
@@ -170,7 +170,7 @@
         {
             "display_name": "Gliese",
             "world_name": "Gliese",
-            "coreprotect_id": 0,
+            "coreprotect_id": 19,
             "image_path": "maps/Gliese.png",
             "pixel_to_block_ratio": 1.0,
             "top_left_coordinate_x": -314,
@@ -179,7 +179,7 @@
         {
             "display_name": "Trappist",
             "world_name": "Trappist",
-            "coreprotect_id": 0,
+            "coreprotect_id": 17,
             "image_path": "maps/Trappist.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -250,
@@ -188,7 +188,7 @@
         {
             "display_name": "Kepler",
             "world_name": "Kepler",
-            "coreprotect_id": 0,
+            "coreprotect_id": 30,
             "image_path": "maps/Kepler.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -512,
@@ -197,16 +197,16 @@
         {
             "display_name": "Brown Dwarf",
             "world_name": "BrownDwarf",
-            "coreprotect_id": 0,
+            "coreprotect_id": 29,
             "image_path": "maps/BrownDwarf.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -301,
             "top_left_coordinate_z": -283
         },
         {
-            "display_name": "Two Moons",
+            "display_name": "Two Moons (High)",
             "world_name": "TwoMoons",
-            "coreprotect_id": 0,
+            "coreprotect_id": 36,
             "image_path": "maps/TwoMoons.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -70,
@@ -215,7 +215,7 @@
         {
             "display_name": "Two Moons (Lluna)",
             "world_name": "TwoMoonsLluna",
-            "coreprotect_id": 0,
+            "coreprotect_id": 43,
             "image_path": "maps/TwoMoonsLluna.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -100,
@@ -224,7 +224,7 @@
         {
             "display_name": "Two Moons (Low)",
             "world_name": "TwoMoonsLow",
-            "coreprotect_id": 0,
+            "coreprotect_id": 38,
             "image_path": "maps/TwoMoonsLow.png",
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -70,
@@ -233,7 +233,7 @@
         {
             "display_name": "Black Hole",
             "world_name": "BlackHole",
-            "coreprotect_id": 0,
+            "coreprotect_id": 48,
             "image_path": "maps/BlackHole.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -280,
@@ -242,7 +242,7 @@
         {
             "display_name": "ET Life",
             "world_name": "ETLife",
-            "coreprotect_id": 0,
+            "coreprotect_id": 27,
             "image_path": "maps/ETLife.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -49,
@@ -256,6 +256,15 @@
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -1024,
             "top_left_coordinate_z": -512
+        },
+        {
+            "display_name": "Mars Barrelbot",
+            "world_name": "Barrelbotdev",
+            "coreprotect_id": 110,
+            "image_path": "maps/Barrelbot.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -1024,
+            "top_left_coordinate_z": -1024
         },
         {
             "display_name": "Mars sdp7",
@@ -274,6 +283,33 @@
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -1024,
             "top_left_coordinate_z": -512
+        },
+        {
+            "display_name": "Mars UNCC2024",
+            "world_name": "UNCC2024",
+            "coreprotect_id": 114,
+            "image_path": "maps/Mars.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -1024,
+            "top_left_coordinate_z": -512
+        },
+        {
+            "display_name": "Mars UNCC2023",
+            "world_name": "UNCC2023",
+            "coreprotect_id": 91,
+            "image_path": "maps/Mars.png",
+            "pixel_to_block_ratio": 2.0,
+            "top_left_coordinate_x": -1024,
+            "top_left_coordinate_z": -512
+        },
+        {
+            "display_name": "Play",
+            "world_name": "play",
+            "coreprotect_id": 89,
+            "image_path": "maps/Play.png",
+            "pixel_to_block_ratio": 1.0,
+            "top_left_coordinate_x": 768,
+            "top_left_coordinate_z": 768
         }
     ]
 }
