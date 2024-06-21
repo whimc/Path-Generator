@@ -78,15 +78,6 @@
             "top_left_coordinate_z": -256
         },
         {
-            "display_name": "Colder Sun (Habitable Strip)",
-            "world_name": "ColderSun_HabitableStrip",
-            "coreprotect_id": 12,
-            "image_path": "maps/ColderStrip.png",
-            "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -227,
-            "top_left_coordinate_z": -256
-        },        
-        {
             "display_name": "Colder Sun (Cold)",
             "world_name": "ColderCold",
             "coreprotect_id": 72,
@@ -96,15 +87,6 @@
             "top_left_coordinate_z": -137
         },
         {
-            "display_name": "Colder Sun (Cold)",
-            "world_name": "ColderSun_Cold",
-            "coreprotect_id": 4,
-            "image_path": "maps/ColderCold.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -219,
-            "top_left_coordinate_z": -137
-        },        
-        {
             "display_name": "Colder Sun (Hot)",
             "world_name": "ColderHot",
             "coreprotect_id": 65,
@@ -113,15 +95,6 @@
             "top_left_coordinate_x": -302,
             "top_left_coordinate_z": -215
         },
-        {
-            "display_name": "Colder Sun (Hot)",
-            "world_name": "ColderSun_Hot",
-            "coreprotect_id": 3,
-            "image_path": "maps/ColderHot.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -302,
-            "top_left_coordinate_z": -215
-        },        
         {
             "display_name": "Tilted Earth (Frozen)",
             "world_name": "TiltedFrozen",
@@ -143,39 +116,12 @@
         {
             "display_name": "Tilted Earth (Melting)",
             "world_name": "TiltedMelting",
-            "coreprotect_id": 75,
-            "image_path": "maps/TiltedEarthMelting-4px-to-1block.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -395,
-            "top_left_coordinate_z": -394
-        },
-        {
-            "display_name": "Tilted Earth (Frozen)",
-            "world_name": "TiltedFrozen",
-            "coreprotect_id": 8,
-            "image_path": "maps/TiltedEarthFrozen-3.3px-to-1block.png",
-            "pixel_to_block_ratio": 3.3,
-            "top_left_coordinate_x": -330,
-            "top_left_coordinate_z": -200
-        },
-        {
-            "display_name": "Tilted Earth (Warm)",
-            "world_name": "TiltedWarm",
-            "coreprotect_id": 5,
-            "image_path": "maps/TiltedEarthJungle-3.3px-to-1block.png",
-            "pixel_to_block_ratio": 3.3,
-            "top_left_coordinate_x": -301,
-            "top_left_coordinate_z": -169
-        },
-        {
-            "display_name": "Tilted Earth (Melting)",
-            "world_name": "TiltedMelting",
             "coreprotect_id": 2,
             "image_path": "maps/TiltedMelting.png",
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -730,
             "top_left_coordinate_z": -880
-        },        
+        },
         {
             "display_name": "Mynoa (Close)",
             "world_name": "MynoaClose",
@@ -202,51 +148,6 @@
             "pixel_to_block_ratio": 4.0,
             "top_left_coordinate_x": -81,
             "top_left_coordinate_z": -624
-        },
-        {
-            "display_name": "Mynoa (Close)",
-            "world_name": "Mynoa_Close",
-            "coreprotect_id": 23,
-            "image_path": "maps/MynoaClose.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": 1218,
-            "top_left_coordinate_z": 786
-        },
-        {
-            "display_name": "Mynoa (Half)",
-            "world_name": "Mynoa_Half",
-            "coreprotect_id": 24,
-            "image_path": "maps/MynoaHalf.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -128,
-            "top_left_coordinate_z": 44
-        },
-        {
-            "display_name": "Mynoa (Far)",
-            "world_name": "Mynoa_Far",
-            "coreprotect_id": 25,
-            "image_path": "maps/MynoaFar.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -81,
-            "top_left_coordinate_z": -624
-        },        
-        {
-            "display_name": "Cancri",
-            "world_name": "Cancri_55e",
-            "coreprotect_id": 13,
-            "image_path": "maps/Cancri.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -21,
-            "top_left_coordinate_z": -28
-        },
-        {
-            "display_name": "Cancri Cold",
-            "world_name": "Cancri_Cold",
-            "coreprotect_id": 50,
-            "image_path": "maps/CancriCold.png",
-            "pixel_to_block_ratio": 4.0,
-            "top_left_coordinate_x": -100,
-            "top_left_coordinate_z": -100
         },
         {
             "display_name": "Cancri",
@@ -276,15 +177,6 @@
             "top_left_coordinate_z": -257
         },
         {
-            "display_name": "Gliese",
-            "world_name": "Gliese_436b",
-            "coreprotect_id": 14,
-            "image_path": "maps/Gliese.png",
-            "pixel_to_block_ratio": 1.0,
-            "top_left_coordinate_x": -314,
-            "top_left_coordinate_z": -257
-        },
-        {
             "display_name": "Trappist",
             "world_name": "Trappist",
             "coreprotect_id": 17,
@@ -294,15 +186,6 @@
             "top_left_coordinate_z": -216
         },
         {
-            "display_name": "Trappist",
-            "world_name": "Trappist_1e",
-            "coreprotect_id": 6,
-            "image_path": "maps/Trappist.png",
-            "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -250,
-            "top_left_coordinate_z": -216
-        },        
-        {
             "display_name": "Kepler",
             "world_name": "Kepler",
             "coreprotect_id": 30,
@@ -311,15 +194,6 @@
             "top_left_coordinate_x": -512,
             "top_left_coordinate_z": -512
         },
-        {
-            "display_name": "Kepler",
-            "world_name": "Kepler_186f",
-            "coreprotect_id": 28,
-            "image_path": "maps/Kepler.png",
-            "pixel_to_block_ratio": 2.0,
-            "top_left_coordinate_x": -512,
-            "top_left_coordinate_z": -512
-        },        
         {
             "display_name": "Brown Dwarf",
             "world_name": "BrownDwarf",
@@ -427,6 +301,15 @@
             "pixel_to_block_ratio": 2.0,
             "top_left_coordinate_x": -1024,
             "top_left_coordinate_z": -512
-        }        
+        },
+        {
+            "display_name": "Play",
+            "world_name": "play",
+            "coreprotect_id": 89,
+            "image_path": "maps/Play.png",
+            "pixel_to_block_ratio": 1.0,
+            "top_left_coordinate_x": 768,
+            "top_left_coordinate_z": 768
+        }
     ]
 }
