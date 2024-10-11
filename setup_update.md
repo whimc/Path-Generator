@@ -8,7 +8,7 @@
 *Before starting, make sure the security permissions on the server are configured to allow all inbouind traffic.*
 
 ## File structure
-This project (and subsequent APIs) will live in `/srv/whimc`.
+This project (and subsequent APIs) will live in `/srv/whimc` (you may have to change it from your default user directory).
 This entire tutorial will be using the super user.
 ```bash
 sudo su
