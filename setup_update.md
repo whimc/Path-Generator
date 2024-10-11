@@ -8,7 +8,7 @@
 *Before starting, make sure the security permissions on the server are configured to allow all inbouind traffic.*
 
 ## File structure
-This project (and subsequent APIs) will live in `/srv/whimc` (you may have to change it from your default user directory).
+This project (and subsequent APIs) will live in `/srv/whimc`.
 This entire tutorial will be using the super user.
 ```bash
 sudo su
@@ -72,6 +72,10 @@ cp path-generator.conf /etc/nginx/sites-enabled
 systemctl restart nginx
 ufw allow 'Nginx Full'
 ```
+
+Path-generator.conf may need additional configuration for AWS:
+server_name (example whimc-api.education.illinois.edu)
+SSL certificate information (in our case Certbot)
 
 **You are now done.** The API should now be visible at `http://[public DNS]/path-generator`.
 
