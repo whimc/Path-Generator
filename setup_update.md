@@ -2,10 +2,12 @@
 - [Installation](#Installation)
 - [Updating and Adding New Maps](#Updating-and-Adding-New-Maps)
 
-# Installation
-**[this guide](https://faun.pub/deploy-flask-app-with-nginx-using-gunicorn-7fda4f50066a) was followed to set up the server.**
+Note: If you only need to obtain player path images, please refer to the README.md file instead. Setting up the server is not necessary for this purpose.
 
-*Before starting, make sure the security permissions on the server are configured to allow all inbouind traffic.*
+# Installation
+** We followed [this guide](https://faun.pub/deploy-flask-app-with-nginx-using-gunicorn-7fda4f50066a) to set up the server.** This guide introduces how to deploy a micro Flask application using Gunicorn as the WSGI server and Nginx as the web server. It is recommended for those unfamiliar with deploying Flask applications, as it covers key steps like installing dependencies, setting up a virtual environment, and configuring Nginx.
+
+*Before starting, make sure the security permissions on the server are configured to allow all inbouind traffic.* In other words, please ensure that the server's security settings (such as firewall rules or security group configurations) are adjusted to accept all incoming requests from all sources.
 
 ## File structure
 This project (and subsequent APIs) will live in `/srv/whimc`.
@@ -15,6 +17,7 @@ sudo su
 mkdir /srv/whimc
 cd /srv/whimc
 ```
+These commands should be executed in a terminal or command line interface on the server where you are setting up your Flask application.
 
 ## Cloning the repo
 We need to clone the repo but since we are the super user right now, there is no SSH key.
@@ -23,6 +26,7 @@ Replace `/location/to/private_ssh_key` with your path. **Make sure the resulting
 ```bash
 git clone git@github.com:whimc/Path-Generator.git --config core.sshCommand="ssh -i /location/to/private_ssh_key" path-generator
 ```
+Note: This assumes you have already generated an SSH key. If you currently do not have this set up, please refer to the **EC2 Setup Guide** below before running the git clone command.
 
 ## Python requirements
 Recent versions of Ubuntu come with Python 3 pre-installed. **Make sure the version is >= 3.10**. Install/update Python if this is not the case.
@@ -59,6 +63,9 @@ Modify `server_name` within `path-generator.conf` to match the public DNS of the
 ```bash
 vim path-generator.conf # Modify 'server_name'
 ```
+Note: Navigate to the server_name line using the arrow keys. Press i to enter insert mode to edit the text.
+Press Esc to exit insert mode.
+After making your changes, type :wq and press Enter to save and exit Vim.
 
 Modify `server_names_hash_bucket_size` within `/etc/nginx/nginx.conf` to be 128 instead of 32.
 This is necessary due to the length of EC2 public DNS addresses.
