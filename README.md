@@ -47,6 +47,7 @@ $ pip install -r requirements.txt
 
 # Installation and Map Updates
 Can be found in [setup_update.md](./setup_update.md)
+Note: If you only need to obtain player path images, setting up the server is not necessary for this purpose.
 
 # Running Path Generator
 
@@ -55,6 +56,7 @@ To locally run the generator:
 ```
 $ python -m pathgenerator [-h] [-n] [-o] [-e] <username> <start_time> <end_time>
 ```
+The best way to find the list of usernames and their play times is through the log data. Please contact us if you need this information but do not have access to it.
 
 ## Exploration Metrics
 Exploration metrics 'draw' a 10x10 grid on maps. If a user explores one of those tiles or makes an observation on them,
