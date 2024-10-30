@@ -80,6 +80,10 @@ systemctl restart nginx
 ufw allow 'Nginx Full'
 ```
 
+Path-generator.conf may need additional configuration for AWS:
+server_name (example whimc-api.education.illinois.edu)
+SSL certificate information (in our case Certbot)
+
 **You are now done.** The API should now be visible at `http://[public DNS]/path-generator`.
 
 # EC2 Setup Guide
