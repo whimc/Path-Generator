@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Optional PAT that can push to protected master (needed to sync VERSION).
+          # Tags and GitHub Releases still work with the default token.
+          token: ${{ secrets.VERSION_BUMP_TOKEN != '' && secrets.VERSION_BUMP_TOKEN || github.token }}
+
+      - name: Bump version
+        id: bump
+        run: |
+          NEXT="$(python3 scripts/bump_version.py)"
+          echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
+          echo "Bumped version to ${NEXT}"
+
+      - name: Commit VERSION
+        id: commit
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION
+          if git diff --staged --quiet; then
+            echo "VERSION already up to date"
+            exit 0
+          fi
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.version }} [skip ci]"
+          git push origin HEAD:master
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.VERSION_BUMP_TOKEN != '' && secrets.VERSION_BUMP_TOKEN || github.token }}
+        run: |
+          VERSION="${{ steps.bump.outputs.version }}"
+          TAG="v${VERSION}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists; skipping release create"
+            exit 0
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "Path-Generator ${TAG}" \
+            --notes "Automated release ${TAG} from merge to master."

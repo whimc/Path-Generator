@@ -1,5 +1,7 @@
 # API Lander page
 
+Version endpoint: `/path-generator/version`
+
 ***
 
 ## Generate path map images

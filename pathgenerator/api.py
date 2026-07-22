@@ -6,6 +6,7 @@ import os
 from server.markdown_to_html import toHTML
 
 import pathgenerator.runner as runner
+from pathgenerator.version import __version__
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +27,11 @@ class Default(Resource):
         return make_response(toHTML(os.path.join('server', 'lander_page.md')), 200, headers)
 
 
+class Version(Resource):
+    def get(self):
+        return make_response({'version': __version__})
+
+
 class PathGenerator(Resource):
     def get(self):
         args = parser.parse_args()
@@ -37,9 +43,10 @@ class PathGenerator(Resource):
 
         links = runner.get_path_links(username, start_time, end_time, gen_empty=gen_empty)
 
-        return make_response({'success': True, 'links': links or []})
+        return make_response({'success': True, 'links': links or [], 'version': __version__})
 
 api.add_resource(Default, '/')
+api.add_resource(Version, '/version')
 api.add_resource(PathGenerator, '/api')
 
 if __name__ == '__main__':
