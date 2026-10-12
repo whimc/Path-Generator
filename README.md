@@ -1,3 +1,5 @@
+<mark>**[This project has been superseded by WHIMC-explorer](https://github.com/whimc/WHIMC-explorer)**</mark>
+
 # Path-Generator
 Generates images with block, position, and observations data overlayed. The most recent generated images can be found within `output/`.
 
