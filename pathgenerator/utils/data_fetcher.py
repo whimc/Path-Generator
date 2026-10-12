@@ -1,5 +1,5 @@
 import mysql.connector
-from mysql.connector.cursor import CursorBase
+from mysql.connector.cursor import MySQLCursorAbstract
 
 from pathgenerator.config import DB_DATABASE, DB_HOST, DB_PASSWORD, DB_USER, USERS_TABLE, \
     WORLDS_TABLE, ALL_WORLDS, BLOCKS_TABLE, POSITIONS_TABLE, OBSERVATIONS_TABLE, WORLDS
@@ -30,7 +30,7 @@ class DataFetcher:
         self._end_time = end_time
 
         mydb = mysql.connector.connect(**creds)
-        self._cursor: CursorBase = mydb.cursor()
+        self._cursor: MySQLCursorAbstract = mydb.cursor()
 
         # Fetch all the data
         self.position_data = self._fetch_position_data()
@@ -44,10 +44,11 @@ class DataFetcher:
         self._cursor.execute(
             "SELECT world AS world_name, x, y, z, time "
             f"FROM {POSITIONS_TABLE} "
-            f"WHERE username = '{self._username}' "
-            f"AND time BETWEEN {self._start_time} AND {self._end_time} "
+            "WHERE username = %s "
+            "AND time BETWEEN %s AND %s "
             f"AND world IN {MAPS_IN_QUERY} "
-            "ORDER BY time ASC"
+            "ORDER BY time ASC",
+            (self._username, self._start_time, self._end_time),
         )
         return self._cursor.fetchall()
 
@@ -61,10 +62,11 @@ class DataFetcher:
             f" SELECT world FROM {WORLDS_TABLE} WHERE id = wid) AS world_name, "
             " x, y, z, action "
             f"FROM {BLOCKS_TABLE} as b "
-            f"WHERE time BETWEEN {self._start_time} AND {self._end_time} "
-            f"AND user = (SELECT rowid FROM {USERS_TABLE} WHERE user = '{self._username}') "
+            "WHERE time BETWEEN %s AND %s "
+            f"AND user = (SELECT rowid FROM {USERS_TABLE} WHERE user = %s) "
             f"AND wid IN {MAP_IDS_IN_QUERY} "
-            "ORDER BY time ASC"
+            "ORDER BY time ASC",
+            (self._start_time, self._end_time, self._username),
         )
         return self._cursor.fetchall()
 
@@ -73,8 +75,9 @@ class DataFetcher:
         self._cursor.execute(
             "SELECT world AS world_name, x, y, z, observation "
             f"FROM {OBSERVATIONS_TABLE} "
-            f"WHERE username = '{self._username}' "
-            f"AND time between {self._start_time * 1000} AND {self._end_time * 1000} "
-            f"AND world IN {MAPS_IN_QUERY} "
+            "WHERE username = %s "
+            "AND time between %s AND %s "
+            f"AND world IN {MAPS_IN_QUERY} ",
+            (self._username, self._start_time * 1000, self._end_time * 1000),
         )
         return self._cursor.fetchall()
